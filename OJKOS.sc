@@ -16,7 +16,7 @@ OJKOS {
 		server.waitForBoot({
 
 			// load clicks....and lights???
-			data = File.readAllString(path ++ "data.scd").interpret;
+			data = File.readAllString(path ++ "score.scd").interpret;
 
 			// load buffers
 			pbTracks = PathName(path ++ "audio").entries.collect({ |entry|
@@ -49,20 +49,17 @@ OJKOS {
 		^clickArray
 	}
 
-	cueFrom { |from = 'intro', to = 'outro', click = true, countIn = false|
+	cueFrom { |from = 'intro', to = 'outro', click = true, countIn = false|  // maybe each individual click has a slot in data Arrays? So I can
 		var fromIndex = this.sections.indexOf(from);
 		var toIndex = this.sections.indexOf(to);
 		var countInArray, cuedArray = [];
 
-		if(countIn,{
+		if(countIn,{                                             // can I make this a 4-voice countIn that calculates the correct offsets for each voice?
 			var bpm = this.clicks[fromIndex].flat.first.bpm;
 
-			countInArray = [ Click(bpm,2,repeats: 2), Click(bpm,1,repeats: 4) ].collect({ |clk| clk.pattern });  // must add outputs for these clicks as well!!
-
-			countInArray = Pseq(countInArray);
-
+			countInArray = Pseq([ ClickCue(bpm,2,repeats: 2).pattern, ClickCue(bpm,1,repeats: 4).pattern ]);  // must add outputs for these clicks as well!!
 		},{
-			countInArray = Pseq([Rest(0)]),   // test???
+			countInArray = Pseq([ Rest(0) ])   // test???
 		});
 
 		if(click,{
@@ -97,6 +94,4 @@ OJKOS(
 	NetAddr("192.168.0.101", 8000), // lemurAddr
 )
 */
-
-
 

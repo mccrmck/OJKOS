@@ -6,9 +6,13 @@ var pathToDMXMIDI = "";
 [
 	(
 		name: 'countIn',
-		click0: [ ],
-		click1: [ ],
-		click2: [ ],
-		click3: [ ],
+		click: [
+
+		],
+		pattern: [
+
+		],
+
+
 	)
 ]

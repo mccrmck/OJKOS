@@ -1,30 +1,30 @@
 //////////// == CONTROL STRUCTURES: DATA == ////////////
 
 
-~findABetterWayToAccess = (
+~findABetterWayToAccess = IdentityDictionary[
 
-	henriette: (
+	'henriette' -> (
 		silenceThresh: -20.dbamp,
 		minFreq: 60.midicps,
 		maxFreq: 84.midicps,
 		// all sorts of stuff can go here...compressor settings?amplitude threshold?
 	),
-	camilla: (),
-	maria: (),
-	sigrid: (),
-	tina: (),
+	'camilla' -> (),
+	'maria' -> (),
+	'sigrid' -> (),
+	'tina' -> (),
 
-	richard: (),
-	lyder: (),
-	tancred: (),
+	'richard' -> (),
+	'lyder' -> (),
+	'tancred' -> (),
 
-	andreas: (),
-	magnus: (),
-	johannes: (),
+	'andreas' -> (),
+	'magnus' -> (),
+	'johannes' -> (),
 
-	knut: (),
-	arneMartin: (),
-	alexander: (),
-	oskar: (),
+	'knut' -> (),
+	'arneMartin' -> (),
+	'alexander' -> (),
+	'oskar' -> (),
 
-)
+]

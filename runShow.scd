@@ -1,6 +1,7 @@
 
 
 (
+var server = Server.default;
 var inputs = IdentityDictionary[
 	'henriette'  -> 0,
 	'camilla'    -> 1,
@@ -25,6 +26,10 @@ var clickOuts = (0..24); // or whatever
 var synthOuts = 25; // or whatever
 var processOuts = 27; // or whatever
 var lemurAddr = NetAddr("192.168.0.101", 8000);
+
+//server init stuff
+// more inputs???
+// soundcard
 
 OJKOS(clickOuts,synthOuts,processOuts,lemurAddr);
 )

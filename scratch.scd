@@ -365,6 +365,7 @@ Ppar([
 	Pbind(
 		\instrument,\klik,
 		\dur,Prand([Pseq([0.125],4),Pseq([0.125,0.125,0.25]),Pseq([0.125,0.25,0.125])],inf) * 60/96,
+		\type,\grain,
 		\fFreq,12000,
 		\gain,20,
 		\rq,0.8,
@@ -412,7 +413,7 @@ Ppar([
 		\curve,10,
 		\gain,4,
 		\amp,Pseq([0.05],inf);
-	).trace
+	)
 
 ]).play
 )

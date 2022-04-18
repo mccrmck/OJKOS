@@ -47,14 +47,14 @@ SynthDef(\grainPerc,{
 SynthDef(\bdSynth,{
 	var freq = \freq.kr(440);
 	var atk = \atk.kr(0.01);
-	var freqSweep = freq * XLine.kr(4,1,atk * \trans.kr(6)).lag;
+	var freqSweep = freq * XLine.kr(4,1,\sweep.kr(0.04)).lag;
 	var sig = SinOsc.ar(freqSweep) * \gain.kr(1);
 	sig = RLPF.ar(sig,freqSweep * 2,\rq.kr(1));
 	sig = sig.tanh;
-	sig = Compander.ar(sig,DelayN.ar(sig,0.2,atk),0.5,1,1/3) * 3;
+	sig = Compander.ar(sig,sig,0.5,1,1/3,atk,0.1,3);
 
 	sig = sig * Env.perc(atk,\rls.kr(0.1),1,\curve.kr(-4)).kr(2);
-	Out.ar(\soundOut.ar,sig * \sendAmp.kr(0));
+	Out.ar(\sendBus.ar,sig * \sendAmp.kr(0));
 	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5));
 	Out.ar(\out.ar,sig);
 }).add;

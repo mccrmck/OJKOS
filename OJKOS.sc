@@ -3,7 +3,7 @@
 OJKOS {
 
 	classvar <>inBus, <clickOutBus, <synthOutBus, <fxOutBus, <lemurAddr;
-	classvar <score, <pbTracks;
+	classvar <patterns, <score, <pbTracks;
 
 	*new { |ins, clicks, synthOut, fxOut, guiAddr|
 		^super.new.init(ins,clicks, synthOut, fxOut, guiAddr);
@@ -26,8 +26,8 @@ OJKOS {
 
 			server.sync;
 
-			// load Patterns??? Test out Pdef Functions!!!
-			File.readAllString(path ++ "patterns.scd").interpret;
+			// load Patterns
+			patterns = File.readAllString(path ++ "patterns.scd").interpret;
 			server.sync;
 
 			// load buffers

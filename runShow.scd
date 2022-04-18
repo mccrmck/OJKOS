@@ -57,7 +57,7 @@ server.options.numInputBusChannels = 32;
 server.options.numOutputBusChannels = 32;
 // server.options.device = "Dante Virtual Soundcard";
 
-OJKOS(inputs,clickOuts,synthOuts,processOuts,lemurAddr);    /// it's not passing the lemur address into the oscDef file yet..
+OJKOS(inputs,clickOuts,synthOuts,processOuts,lemurAddr);
 )
 
 
@@ -72,10 +72,19 @@ server.options.device = "Dante Virtual Soundcard";
 Safety.enable
 Safety.disable
 
-c = OJKOS.cueFrom('breakB','breakI',true,false,false)
+// must find a better solution for booleans
+~tune = true
+
+
+c = OJKOS.cueFrom('caseF','caseF',true,true,false)
 Click.loopCues['tuneLoop'] = false
 c.play
 c.stop
+
+OJKOS.sections[15]
+p = Ppar([OJKOS.score[15]['pats'][1]])
+p.play
+
 
 
 

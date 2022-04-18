@@ -156,17 +156,7 @@ Ppar((4..19).collect({ |i| Click(96,4,2,inf,out: i).pattern}) ++ [
 		\gain,2,
 		\amp,Pseq([0.02],inf);
 	),
-	Pbind(
-		\instrument,\glitchSine,
-		\dur,Pseq([0.125,0.125,0.5,0.25,0.5,6.5,0.25,0.5,0.25,0.125,0.125,0.25,6.5],inf) * 60/96,
-		\type,Pseq(\note!5 ++ [\rest,\rest] ++ (\note!5) ++ [\rest],inf),
-		\legato,0.5,
-		\freq, Pseq([[28, 73]],inf).midicps, //560
-		\rls,0.001,
-		\curve,10,
-		\gain,2,
-		\amp,Pseq([[1,0.03]],inf) * 0.3;
-	),
+
 	Pbind(
 		\instrument,\glitchSine,
 		\dur,Pseq([7.5,0.5],inf) * 60/96,
@@ -177,20 +167,6 @@ Ppar((4..19).collect({ |i| Click(96,4,2,inf,out: i).pattern}) ++ [
 		\curve,10.neg,
 		\gain,2,
 		\amp,Pseq([0.04],inf);
-	),
-	Pbind(
-		\instrument,\klik,
-		// \dur,Prand([Pseq([0.125],4),Pseq([0.125,0.125,0.25]),Pseq([0.125,0.25,0.125])],inf) * 60/96,
-		\dur,0.125 * 60/96,
-		\type,Pwrand([\rest,\grain],[0.2,0.8],inf),
-		\fFreq,12000,
-		\gain,20,
-		\rq,0.8,
-		\atk,0.001,
-		\rls,0.001,
-		// \amp,Prand([0.3,0.1,0.01],inf),
-		\amp,Pstep([0.3,Pwhite(0.01,0.1)],[0.125,0.375] * 60/96,inf),
-		\pan, Prand([-0.8,-0.4,0.4,0.8],inf)
 	),
 	Pbind(
 		\instrument,\glitchSine,
@@ -249,10 +225,6 @@ x.set(\gate,0)
 x = 4.collect({|i| Synth(\resNoiseASR,[\atk,10,\freq,[62.5,66.5,71,80].midicps.at(i),\sineFreq,[62.5,66.5,71,80].midicps.at(i),\sineMix,0.1,\dcy,0.6,\pNoiz,0.01,\amp,0.2])})
 
 
-// glitch break???
-
-[200,190].cpsmidi
-.
 
 Pmono(\glitchSine,\dur,Pseq([0.0625],16*8) * 60/96,\freq,1000,\gain,4,\legato,1,\rls,0.001,\amp,0.01).play;
 
@@ -462,3 +434,40 @@ Pbind(
 ).play
 )
 
+
+
+
+
+
+
+(
+SynthDef(\lfNoise,{
+	var sig = LFNoise0.ar(\freq.kr(440));
+	sig = CombC.ar(sig,0.2,\combFreq.kr(40).reciprocal,\dcy.kr(0.2));
+	sig = (sig + \offset.kr(0) * \gain.kr(1)).fold2;
+	sig = sig * Env.linen(\atk.kr(0.01),\sus.kr(0.1),\rls.kr(0.1),1,\curve.kr(0)).kr(2);
+	sig = LeakDC.ar(sig);
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
+	Out.ar(\out.kr(0),sig);
+}).add;
+)
+
+Pmono(\lfNoise,\dur,Pseq([0.0625],16*8) * 60/96,\freq,500,\gain,2,\legato,1,\rls,0.001,\amp,0.1).play;
+
+(
+Pbind(
+	\instrument,\lfNoise,
+	\dur,Prand([0.25],inf) * 60/130,
+	\type,Prand([\grain],inf),
+	\freq, Pexprand(10,1000,inf),
+	\combFreq,Prand([82,88],inf).midicps / Prand([1,4,8,2],inf),
+	\dcy,Prand([0.5,1,0.1],inf) * Prand([1,-1],inf),
+	\atk,0.001,
+	\sus,Prand([0.25,0.5,0.75],inf) * Pkey(\dur),
+	\rls,0.001,
+	\gain,Pwhite(1,15,inf),
+	\offset,0,
+	\pan,Pseq([[-1,1]],inf),
+	\amp, 0.05,
+).play
+)

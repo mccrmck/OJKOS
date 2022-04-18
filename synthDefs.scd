@@ -3,21 +3,24 @@
 
 SynthDef(\recorderMono,{
 	var sig = SoundIn.ar(\inBus.kr());
+	sig = HPF.ar(sig,\fFreq.kr(150));
 	sig = Compander.ar(sig,sig,0.5,1,1/4,0.01,0.1,4);
-	RecordBuf.ar(sig,\bufnum.kr(),doneAction: 2)
+	RecordBuf.ar(sig,\bufnum.kr(),loop:0,doneAction: 2)
 }).add;
 
 SynthDef(\recorderStereo,{
 	var sig = SoundIn.ar(\inBus.kr(0!2));
+	sig = HPF.ar(sig,\fFreq.kr(150));
 	sig = Compander.ar(sig,sig,0.5,1,1/4,0.01,0.1,4);
-	RecordBuf.ar(sig,\bufnum.kr(),doneAction: 2)
+	RecordBuf.ar(sig,\bufnum.kr(),loop:0,doneAction: 2)
 }).add;
 
 SynthDef(\recorderTrance,{
 	var sig = SoundIn.ar(\inBus.kr(0!10));
 	sig = sig.sum;
+	sig = HPF.ar(sig,\fFreq.kr(150));
 	sig = Compander.ar(sig,sig,0.5,1,1/4,0.01,0.1,4);
-	RecordBuf.ar(sig,\bufnum.kr(),doneAction: 2)
+	RecordBuf.ar(sig,\bufnum.kr(),loop:0,doneAction: 2)
 }).add;
 
 /*=============   intro   ==============*/
@@ -57,6 +60,18 @@ SynthDef(\bdSynth,{
 	Out.ar(\sendBus.ar,sig * \sendAmp.kr(0));
 	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5));
 	Out.ar(\out.ar,sig);
+}).add;
+
+SynthDef(\tranceGate,{
+	var bufnum = \bufnum.kr();
+	var sig = PlayBuf.ar(1,bufnum,BufRateScale.kr(bufnum),loop: 1);
+
+	sig = (sig * \gain.kr(1)).tanh;
+	sig = sig * Env([1,0,1],[\gAtk.kr(0.1),\gRls.kr(0.001)],\gCurve.kr(1)).ar(gate:\trig.tr);
+	sig = sig * Env.asr(\atk.kr(0),1,\rls.kr(0.01),\curve.kr(-4)).kr(2,\gate.kr(1));
+
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
+	OffsetOut.ar(\out.kr(0),sig)
 }).add;
 
 /*=============   case   ==============*/
@@ -152,18 +167,20 @@ SynthDef(\lfNoise,{
 
 /*=============   push   ==============*/
 
-SynthDef(\push,{                              // fix this, take an array of freqs and avoid multichannel expansion...use SinOsc also??
-	var freq = \freq.kr(440);
-	var sig = LFTri.ar(freq);
-	sig = MidEQ.ar(sig,[freq * 4,freq * 3],0.5,8);
-	sig = MidEQ.ar(sig,freq,1,4);
-	sig = RLPF.ar(sig,\fFreq.kr(800),\rq.kr(1));
-	sig = (sig * \gain.kr(1) * -8.dbamp).tanh;
-	sig = sig * Env.perc(\atk.kr(0.01),\rls.kr(0.1),1,\curve.kr(-4)).kr(2);
+SynthDef(\pushSines,{
+	var freqs = \freqs.kr(440!4);
+	var sig	= Klang.ar(`[freqs,\amps.kr(0.1!4)]);
 
-	sig = Balance2.ar(sig[0],sig[1],\pan.kr(0),\amp.kr(0.5));
-	Out.ar(\out.kr(0),sig)
+	sig = HPF.ar(sig,150);
+	sig = MidEQ.ar(sig,350,0.3,-6);
+	sig = RLPF.ar(sig,freqs[0] * 4,0.2);
+
+	sig = (sig * \gain.kr(1)).tanh;
+	sig = sig * Env.perc(\atk.kr(0.01),\rls.kr(0.1),1,\curve.kr(0)).kr(2);
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
+	OffsetOut.ar(\out.kr(0),sig);
 }).add;
+
 
 /*=============   pop   ==============*/
 

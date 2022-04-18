@@ -2,8 +2,9 @@
 
 OJKOS {
 
-	classvar <>inBus, <clickOutBus, <synthOutBus, <fxOutBus, <lemurAddr;
+	classvar <inBus, <clickOutBus, <synthOutBus, <fxOutBus, <lemurAddr;
 	classvar <patterns, <score, <pbTracks;
+	classvar <tranceBuf, <elseBufs, <recBufs;
 
 	*new { |ins, clicks, synthOut, fxOut, guiAddr|
 		^super.new.init(ins,clicks, synthOut, fxOut, guiAddr);
@@ -39,6 +40,12 @@ OJKOS {
 
 			// load score
 			score = File.readAllString(path ++ "score.scd").interpret;
+
+			server.sync;
+
+			tranceBuf = Buffer.alloc(server,server.sampleRate * 15 * 60/142);
+			// elseBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8)}); // shouold these be timed differently to match what they record?
+			// recBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8)});
 
 			server.sync;
 

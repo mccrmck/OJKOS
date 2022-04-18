@@ -68,57 +68,9 @@ Ndef(\emptySet,{
 Ndef(\emptySet).set(\freq,28.midicps,\lpFreq,8000,\lpQ,0.2,\hpFreq,40,\hpQ,1,\midGain,1,\sideGain,12,\offset,0.9,\gain,2,\width,0.3,\amp,0.2)
 Ndef(\emptySet).clear
 
-// is it possible to make a Phasor trigger an Env at buffer boundaries to avoid clicks?
-
-~buf = Buffer.readChannel(s,"/Users/mikemccormick/Desktop/test.wav",channels: [0])
-~buf = Buffer.readChannel(s,"/Users/mikemccormick/Desktop/trance.wav",channels: [0])
-~buf.play
-
-(
-Ndef(\trance,{
-	var bufnum = ~buf;
-	var ctl = ControlRate.ir;
-	var rate = \rate.kr(1);
-	var recipRate = rate.reciprocal;
-	var win = (1 / ctl) * recipRate;
-	var pos = Phasor.ar(\reset.tr(1),rate * BufRateScale.kr(bufnum),0,BufFrames.kr(bufnum));
-	var sig = BufRd.ar(1,bufnum,pos,1);
-	var trig = (pos >= (BufFrames.kr(bufnum) - (SampleRate.ir /ctl) ));   // control block size...is this right?
-	var env = Env([1,0,1],[win,win]).ar(gate:trig);
-
-	var trance = Env([1,0,1],[\atk.kr(0.001),\rls.kr(0.03)],\curve.kr(-4)).ar(gate: \trig.tr);
-
-	sig = sig * trance;
-	Pan2.ar(sig * env,\pan.kr(0),\amp.kr(1))
-}).play
-)
-
-Ndef(\trance).clear
-
-Ndef(\trance).set(\reset,1)
-(
-Pdef(\test,
-	Pbind(
-		\type,\set,
-		\id, Ndef(\trance).nodeID,
-		\args,#[\trig,\pan,\curve,\reset],
-		\dur, Prand([Pseq([0.5]),Pseq([0.25,0.25,0.5])],inf) * 60/142,
-		// \dur, Prand([0.25,0.5],inf) * 60/142,
-		\curve,10,
-		// \rls,60/142 * 0.125,
-		// \reset,Pstep(1,16,inf),
-		\trig,1,
-		// \pan,Prand([-0.25,0.25],inf),
-		\pan,0,
-	)
-).quant_(60/142).play
-)
-
-Pdef(\test).clear
 
 // granulating fred
 ~fred = Buffer.read(s,"/Users/mikemccormick/Desktop/controlStructures/fred/break.aiff")
-
 
 // Ndef bus behavior- can this be used to route clicks to multiple sources w/o duplicating click streams
 // a quick test looks like it's sample accurate when expanding a mono signal to 5 channels...
@@ -142,7 +94,7 @@ x = Synth(\klik,[\fFreq,10000,\gain,20,\rq,0.8,\atk,0.001,\rls,0.001,\amp,0.4])
 x = Synth(\asrSine,[\freq,8000,\gain,2,\atk,0.001,\rls,0.1,\amp,0.1])
 
 (
-Ppar((4..19).collect({ |i| Click(96,4,2,inf,out: i).pattern}) ++ [
+Ppar([
 
 	Pbind(
 		\instrument,\asrSine,
@@ -211,7 +163,6 @@ Ppar((4..19).collect({ |i| Click(96,4,2,inf,out: i).pattern}) ++ [
 ]).play
 )
 
-
 x = Synth(\resNoisePerc,[\atk,0.01,\rls,0.8,\curve,5.neg,\freq,3400,\dcy,0.3,\pNoiz,0.1,\sineFreq,3000,\sineMix,0.2,\amp,0.5,\gain,4])
 
 x = 2.collect({|i| Synth(\resNoiseASR,[\atk,10,\freqs,[200,250].at(i),\amps,0.6,\rTimes,0.6,\pNoiz,0.01,\amp,0.7])})
@@ -223,6 +174,20 @@ x.set(\freq,1200,\gain,4,\amp,0.01)
 x.set(\gate,0)
 
 x = 4.collect({|i| Synth(\resNoiseASR,[\atk,10,\freq,[62.5,66.5,71,80].midicps.at(i),\sineFreq,[62.5,66.5,71,80].midicps.at(i),\sineMix,0.1,\dcy,0.6,\pNoiz,0.01,\amp,0.2])})
+
+
+(
+Pmono(\resNoiseASR,
+	\dur,Pseq([10],1),
+	\freq,[190,200],
+	\gain,10,
+	\sineFreq,200  * 4,
+	\sineMix,0.05,
+	\atk,5,
+	\rls,5,
+	\amp,0.1,
+).play;
+)
 
 
 
@@ -433,11 +398,6 @@ Pbind(
 	\pan,Pwhite(-0.8,0.8)
 ).play
 )
-
-
-
-
-
 
 
 (

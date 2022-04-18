@@ -76,7 +76,7 @@ Safety.disable
 ~tune = true
 
 
-c = OJKOS.cueFrom('caseF','caseF',true,true,false)
+c = OJKOS.cueFrom('pushA','pushA',true,true,false)
 Click.loopCues['tuneLoop'] = false
 c.play
 c.stop

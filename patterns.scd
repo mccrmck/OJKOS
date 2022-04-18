@@ -1,4 +1,18 @@
 //////////// == CONTROL STRUCTURES: PATTERNS == ////////////
+
+var ins = OJKOS.inBus;
+var chords = Dictionary[
+	\gb  -> ([42,46,53,56]!15).addFirst([44,51,53,58]),
+	\gqb -> ([42.5,46.5,53.5,56.5]!9 ++ ([43,47,54,57]!7)).addFirst([44.5,51.5,53.5,58.5]),
+	\g   -> ([43,47,54,57]!15).addFirst([45,52,54,59]),
+	\ab  -> ([44,48,55,58]!15).addFirst([46,53,55,60]),
+	\a   -> ([45,49,56,59]!15).addFirst([47,54,56,61]),
+	\bb  -> ([46,50,57,60]!15).addFirst([48,55,57,62]),
+	\cqb -> ([47.5,51.5,58.5,61.5]!9 ++ ([48,52,59,62]!7)).addFirst([49.5,56.5,58.5,63.5]),
+	\c   -> ([48,52,59,62]!15).addFirst([50,57,59,64]),
+	\d   -> ([50,54,61,64]!15).addFirst([52,59,61,66]),
+];
+
 IdentityDictionary[                    // these could also be functions??? so I can pass args into Pbind keys???!?!??!
 
 	/*=============   intro   ==============*/
@@ -51,6 +65,24 @@ IdentityDictionary[                    // these could also be functions??? so I 
 		\rls,0.08,
 		\curve,14,
 		\amp,0.1,
+		\out,OJKOS.synthOutBus
+	),
+
+	'tranceGateRec' -> Pbind(
+		\instrument,\recorderTrance,
+		\dur,Pseq([0],1),
+		\inBus,[ ins['henriette'],ins['camilla'],ins['maria'],ins['sigrid'],ins['richard'],ins['lyder'],ins['tancred'],ins['andreas'],ins['magnus'],ins['johannes'] ],
+		\bufnum,OJKOS.tranceBuf,
+	),
+
+	'tranceGate' -> Pmono(\tranceGate,
+		\dur,Prand([0.5,Pseq([0.25],2)],32) * 60/142,
+		\bufnum,OJKOS.tranceBuf,
+		\gCurve,5.neg,
+		\gAtk,0.249 * 60/142,
+		\gRls,0.001 * 60/142,
+		\trig,1,
+		\amp,0.4,
 		\out,OJKOS.synthOutBus
 	),
 
@@ -228,6 +260,208 @@ IdentityDictionary[                    // these could also be functions??? so I 
 
 	/*=============   push   ==============*/
 
+	'pushA' -> Pseq([
+		ClickRest(150,7).pattern,
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([2,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,1,1],inf) * 60/150,
+			\freqs,Pdict(chords,'c',16 * 4 + 1).midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		)
+	]),
+
+	// keys are where the pattern starts, but the mostly live in the following rehearsal mark
+	// I think the durations will be fucked because of the tempo changes - must fix later!
+	'pushF' -> Pseq([
+		ClickRest(150,23).pattern,
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([2,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,1,1],4) * 60/150,
+			\freqs,Pdict(chords,'c',inf).midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		)
+	]),
+
+	'pushG' -> Pseq([
+		ClickRest(150,4 * 15 + 3).pattern,
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([2,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,1,1],4) * 60/150,
+			\freqs,Pdict(chords,'c',inf).midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		)
+	]),
+
+	'pushH' -> Pseq([
+		ClickRest(150,4 * 15 + 3).pattern,
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([2,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,1,1],2) * 60/125,
+			\freqs,Pdict(chords,'a',inf).midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		),
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([2,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,1,1],1) * 60/150,
+			\freqs,Pdict(chords,'c',inf).midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		),
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([2,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,1,1],1) * 60/169,
+			\freqs,Pdict(chords,'d',inf).midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		),
+
+	]),
+
+	'pushI' -> Pseq([
+		ClickRest(125,4 * 8).pattern,
+		ClickRest(150,4 * 4).pattern,
+		ClickRest(169,4 * 3 + 3).pattern,
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([2,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,1,1],1) * Pseq(60/135!9 ++ (60/155!7),inf),
+			\freqs,Pdict(chords,'cqb',inf).midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		),
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([2,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,1,1],1) * 60/155,
+			\freqs,Pdict(chords,'c',inf).midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		),
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([2,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,1,1],2) * 60/120,
+			\freqs,Pdict(chords,'ab',inf).midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		)
+	]),
+
+	'pushJ' -> Pseq([
+		ClickRest(135,4 * 2).pattern,
+		ClickRest(155,4 * 10).pattern,
+		ClickRest(120,4 * 7 + 3).pattern,
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([2,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,1,1],1) * 60/135,
+			\freqs,Pdict(chords,'bb',inf).midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		),
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([2,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,1,1],1) * Pseq(60/100!9 ++ (60/115!7),inf),
+			\freqs,Pdict(chords,'gb',inf).midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		),
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([2,1,1,1,1,1,1,1,1,1,1,1,1,1,1,1],1) * 60/135,
+			\freqs,Pdict(chords,'g',inf).midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		),
+		Pbind(
+			\instrument, \pushSines,
+			\dur,Pseq([1],16) * 60/135,
+			\freqs,chords['g'][1].midicps,
+			\amps,[0.1!4],
+			\gain,1,
+			\atk,0.05,
+			\rls,2,
+			\curve,6.neg,
+			\amp,0.05,
+			\out,OJKOS.synthOutBus
+		),
+	]),
+
+	// we "skip" K because L can start on a downbeat
+
+	'pushL' -> Pbind(
+		\instrument, \pushSines,
+		\dur,Pseq([1],16) * 60/135,
+		\freqs,chords['g'][1].midicps,
+		\amps,[0.1!4],
+		\gain,1,
+		\atk,0.05,
+		\rls,2,
+		\curve,6.neg,
+		\amp,Pseg([1,0.0001],16 * 60/135,\exp,1) * 0.05,
+		\out,OJKOS.synthOutBus
+	),
+
 	/*=============   pop   ==============*/
 
 	/*=============   if   ===============*/
@@ -235,6 +469,5 @@ IdentityDictionary[                    // these could also be functions??? so I 
 	/*=============   else   ==============*/
 
 	/*=============   outro   ==============*/
-
 
 ]

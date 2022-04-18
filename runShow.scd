@@ -1,8 +1,6 @@
-
-
 (
 var server = Server.default;
-var inputs = IdentityDictionary[
+var inputs = Dictionary[
 	'henriette'  -> 0,
 	'camilla'    -> 1,
 	'maria'      -> 2,
@@ -17,19 +15,70 @@ var inputs = IdentityDictionary[
 	'magnus'     -> 9,
 	'johannes'   -> 10,
 
-	'knut'       -> 11,
-	'arneMartin' -> 12,
-	'alexander'  -> 13,
-	'oskar'      -> 14,
+	'knutVibes'  -> 16,
+	'knutPerc'   -> 17,
+	'arneMartin' -> 18,
+	'alexander'  -> 19,
+	'oskar'      -> 20,
+
+	'mains'      -> 22, // and 23!
 ];
-var clickOuts = (0..24); // or whatever
-var synthOuts = 25; // or whatever
-var processOuts = 27; // or whatever
+
+var clickOuts = Dictionary[
+	'henriette'  -> 17,
+	'camilla'    -> 16,
+	'maria'      -> 15,
+	'sigrid'     -> 14,
+	'tina'       -> 13,
+
+	'richard'    -> 10,
+	'lyder'      -> 11,
+	'tancred'    -> 12,
+
+	'andreas'    -> 7,
+	'magnus'     -> 8,
+	'johannes'   -> 9,
+
+	'knut'       -> 18,
+	'arneMartin' -> 5,
+	'alexander'  -> 6,
+	'oskar'      -> 4,
+
+	'mike'       -> 19,
+	'all'        -> (4..19),
+];
+
+var synthOuts = 0; // stereo dvs. [0,1]
+var processOuts = 2; // stereo dvs. [2,3]
 var lemurAddr = NetAddr("192.168.0.101", 8000);
 
 //server init stuff
-// more inputs???
-// soundcard
+server.options.numInputBusChannels = 32;
+server.options.numOutputBusChannels = 32;
+// server.options.device = "Dante Virtual Soundcard";
 
-OJKOS(clickOuts,synthOuts,processOuts,lemurAddr);
+OJKOS(inputs,clickOuts,synthOuts,processOuts,lemurAddr);    /// it's not passing the lemur address into the oscDef file yet..
 )
+
+
+(
+var server = Server.default;
+server.options.numInputBusChannels = 32;
+server.options.numOutputBusChannels = 32;
+server.options.device = "Dante Virtual Soundcard";
+
+)
+
+Safety.enable
+Safety.disable
+
+c = OJKOS.cueFrom('breakB','breakI',true,false,false)
+Click.loopCues['tuneLoop'] = false
+c.play
+c.stop
+
+
+
+SoundCheck(32,[4,6,5,18,19,7,8,9,10,11,12,17,16,15,14,13]).stop
+SoundCheck(4,).stop
+

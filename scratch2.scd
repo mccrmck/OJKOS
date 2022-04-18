@@ -1,5 +1,46 @@
 
+(
+Pbind(
+	\instrument,\klik,
+	\dur,Prand([0.25],inf) * 60/130,
+	\type,Pwrand([\grain,\rest],[0.85,0.15],inf),
+	\fFreq,Pwhite(3000,8000),
+	\gain,30,
+	\rq,0.4,
+	\atk,0.001,
+	\rls,0.05,
+	\curve,2.neg,
+	\amp,Pseq([Pwhite(0.1,0.2,1),Pwhite(0.01,0.08,7)],inf),
+	\pan, Prand([-0.8,-0.4,0.4,0.8],inf)
+).play
+)
 
+// break??
+(
+Pbind(
+	\instrument,\glitchSine,
+	\dur,Pseq([4] ++ (0.25!32),1) * 60/130,
+	\type,Pseq([\note,Pwrand([\note,\rest],[0.85,0.15],32)],inf),
+	\freq,Pseq([2] ++ (1!32),inf) * Pseq([[86.midicps,1100]],inf),
+	\gain,4,
+	\rls,Pseq([0.4] ++ (0.001!32),inf),
+	\curve,10,
+	\amp,Pseq([0.03] ++ (0.05!32),inf),
+	\pan, Prand([[-0.25,0.25]],inf)
+).play
+)
+
+Pbind(
+	\instrument,\glitchSine,
+	\dur,Prand([0.25],inf) * 60/130,
+	\type,Pwrand([\note,\rest],[0.85,0.15],inf),
+	\freq,Pseq([[86.midicps,1100]],inf),
+	\gain,3,
+	\rls,0.001,
+	\curve,10,
+	\amp,0.05,
+	\pan, Prand([[-0.25,0.25]],inf)
+).play
 
 
 Pbind(
@@ -33,7 +74,7 @@ Pmono(\lfNoise,\dur,Pseq([0.0625],16*8) * 60/96,\freq,500,\gain,2,\legato,1,\rls
 Pbind(
 	\instrument,\lfNoise,
 	\dur,Prand([0.25],inf) * 60/130,
-	\type,\grain,
+	\type,Prand([\grain],inf),
 	\freq, Pexprand(10,1000,inf),
 	\combFreq,Prand([82,88],inf).midicps / Prand([1,4,8,2],inf),
 	\dcy,Prand([0.5,1,0.1],inf) * Prand([1,-1],inf),
@@ -47,14 +88,10 @@ Pbind(
 ).play
 )
 
-b = ClickConCat(2,/*ClickEnv([64,83],4,2),ClickEnv([83,102],4,2),*/ClickEnv([102,91],4,2),ClickEnv([91,80],4,2))
+b = ClickConCat(2,ClickEnv([64,83],4,2),ClickEnv([83,102],4,2),ClickEnv([102,91],4,2),ClickEnv([91,80],4,2))
 b.duration
 b.play
 
-109 * 4/5
-102 * 15/16
 
 
-60/68 * 3/2
 
-60/63

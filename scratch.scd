@@ -1,42 +1,3 @@
-
-// tuning notes!!
-
-(
-SynthDef(\tune,{
-	var freq = \freq.kr(440);
-	var sig = SinOsc.ar(freq);
-	sig = (sig * \gain.kr(1)).tanh;
-	sig = RLPF.ar(sig,freq * 6, 0.9);
-	sig = sig * Env([0,1,0],[\atk.kr(0.01),\rls.kr(0.1)],\curve.kr(-4)).kr(2);
-
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5));
-	Out.ar(\out.kr(0),sig)
-}).add;
-)
-
-(
-Pdef(\tuner,
-	Pbind(
-		\instrument,\tune,
-		\dur,Pseq([Pwhite(2,3.0,3),Pwhite(3.8,5.25,1)],inf),
-		\freq, Pseq([[0.25,0.5,1,2]],inf) * Pseq([2,3,3,2],inf) * 46.midicps,
-		\gain,Pwhite(1.0,1.4),
-		\atk,Pwhite(3.0,4.0),
-		\rls,Pwhite(4.0,5.0),
-		\pan,Pfunc({ var rand = 0.8.rand2;  [0,0,rand,rand.neg] }),
-		\amp,0.2
-	)
-).play
-)
-
-
-// echo/canon 12/8 thing
-
-// maybe the clicks need to have more distance between the tempos?
-a = Array.fill(12,{ |i| Click(150 - (i * 3),32,amp: 0.1,out: i.wrap(0,7)).pattern })
-p = Ppar(a)
-p.play
-
 // emptyset intro
 (
 Ndef(\esNoise,{
@@ -101,10 +62,10 @@ Ndef(\emptySet,{
 
 }).play;
 )
+(1..4).reciprocal.reverse
 
-
-// 28.midicps == low E
-Ndef(\emptySet).set(\freq,28.midicps,\lpFreq,2500,\lpQ,1,\hpFreq,20,\hpQ,0.1,\midGain,4,\sideGain,12,\offset,0.8,\gain,4,\width,0.4,\amp,0.2)
+// 28.midicps == low
+Ndef(\emptySet).set(\freq,28.midicps,\lpFreq,8000,\lpQ,0.2,\hpFreq,40,\hpQ,1,\midGain,1,\sideGain,12,\offset,0.9,\gain,2,\width,0.3,\amp,0.2)
 Ndef(\emptySet).clear
 
 // is it possible to make a Phasor trigger an Env at buffer boundaries to avoid clicks?
@@ -125,7 +86,7 @@ Ndef(\trance,{
 	var trig = (pos >= (BufFrames.kr(bufnum) - (SampleRate.ir /ctl) ));   // control block size...is this right?
 	var env = Env([1,0,1],[win,win]).ar(gate:trig);
 
-	var trance = Env([1,0,1],[\atk.kr(0.01),\rls.kr(0.04)],\curve.kr(-4)).ar(gate: \trig.tr);
+	var trance = Env([1,0,1],[\atk.kr(0.001),\rls.kr(0.03)],\curve.kr(-4)).ar(gate: \trig.tr);
 
 	sig = sig * trance;
 	Pan2.ar(sig * env,\pan.kr(0),\amp.kr(1))
@@ -133,7 +94,6 @@ Ndef(\trance,{
 )
 
 Ndef(\trance).clear
-
 
 Ndef(\trance).set(\reset,1)
 (
@@ -156,82 +116,9 @@ Pdef(\test,
 
 Pdef(\test).clear
 
-
 // granulating fred
 ~fred = Buffer.read(s,"/Users/mikemccormick/Desktop/controlStructures/fred/break.aiff")
-(
-SynthDef(\grainPerc,{
-	var bufnum = \bufnum.kr();
-	var sig = PlayBuf.ar(1,bufnum,BufRateScale.kr(bufnum) * \rate.kr(1),1,\pos.kr(0) * BufFrames.kr(bufnum), \loop.kr(0));
-	sig = (sig * \gain.kr(1)).clip2;
-	sig = sig * Env.perc(\atk.kr(0.01),\rls.kr(0.1),1,\curve.kr(-4)).kr(2,\gate.kr(1));
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
-	OffsetOut.ar(\out.kr(0),sig)
 
-}).add
-)
-
-
-(
-Pdef(\test,
-	Pbind(
-		\instrument,\grainPerc,
-		\dur,30/142,
-		\bufnum,~fred,
-		\rate,1,
-		// \pos,Pwhite(0.2,0.8,inf),
-		\pos,Pseq(([0.25,0.4,0.5]!2 ++ [0.25,0.5]).flat,inf), // descending fminor triad
-		// \gain,Pseg([1,40],[40],\exp,inf),
-		\gain,80, //play with this to go from kermit the frog to formant synth to drive!!
-		\atk,0.01,
-		\rls,0.2,
-		\curve,5.neg,
-		\pan,0,
-		\amp,0.3,
-	)
-).quant_(30/142).play
-)
-
-
-// bd synth
-
-(
-SynthDef(\bdSynth,{
-	var freq = \freq.kr(440);
-	var atk = \atk.kr(0.01);
-	var freqSweep = freq * XLine.kr(4,1,atk * \trans.kr(5)).lag;
-	var sig = SinOsc.ar(freqSweep) * \gain.kr(1);
-	sig = RLPF.ar(sig,freqSweep * 2,\rq.kr(1));
-	sig = sig.tanh;
-	sig = Compander.ar(sig,DelayN.ar(sig,0.2,atk),0.5,1,1/3) * 3;
-
-	sig = sig * Env.perc(atk,\rls.kr(0.1),1,\curve.kr(-4)).kr(2);
-	Out.ar(\soundOut.ar,sig * \sendAmp.kr(0));
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5));
-	Out.ar(\out.ar,sig);
-}).add;
-)
-
-
-a = Synth(\bdSynth,[\freq,40])
-a.set(\amp,0.2,\gain,40)
-
-(
-Pdef(\thump,
-	Pbind(
-		\instrument,\bdSynth,
-		\dur,60/142,
-		\freq,29.midicps, //24 == C, 29 == F
-		\trans,6,
-		\rq,0.05,
-		\gain,4,
-		\atk,0.01,
-		\rls,0.08,
-		\curve,14,
-		\amp,0.1,
-	)
-).quant_(60/142).play
-)
 
 // Ndef bus behavior- can this be used to route clicks to multiple sources w/o duplicating click streams
 // a quick test looks like it's sample accurate when expanding a mono signal to 5 channels...
@@ -242,7 +129,7 @@ a = Click(60,repeats: inf,amp: 0.3,out:b)
 c = a.play
 c.stop
 
-Ndef(\test,{ In.ar(b) }).reshaping = \elastic;
+Ndef(\test,{ In.ar(b) }).reshaping_(\elastic).play;
 
 Ndef(\test).playN([0])
 Ndef(\test).playN((0..5))
@@ -250,84 +137,13 @@ Ndef(\test).playN([1]) // plays two channels starting at this index dvs. [0,1] -
 Ndef(\test).playN([0,2,3]) // wraps and maps 2 channels to 3 dvs. [0,1,0] -> [0,2,3]
 Ndef(\test).playN([0,2,3,4]) // wraps and maps 2 channels to 3 dvs. [0,1,0,1] -> [0,2,3,4]
 
-
-s.record(numChannels:6)
-
-// glitchness
-(
-SynthDef(\asrSine,{
-	var sig	= SinOsc.ar(\freq.kr(440));
-	sig = (sig * \gain.kr(1)).clip2;
-	sig = sig * Env.asr(\atk.kr(0.01),1,\rls.kr(0.1),\curve.kr(0)).kr(2,\gate.kr(1));
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
-	OffsetOut.ar(\out.kr(0),sig);
-}).add;
-
-SynthDef(\glitchSine,{
-	var freq = \freq.kr(440);
-	var sig	= SinOsc.ar(0, (Sweep.ar(1, 2pi * freq) + (pi/3)).wrap(-pi, pi));
-
-	sig = (sig * \gain.kr(1)).tanh;
-	sig = sig * Env.cutoff(\rls.kr(0.1),1,\curve.kr(0)).kr(2,\gate.kr(1));
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
-	OffsetOut.ar(\out.kr(0),sig);
-}).add;
-
-SynthDef(\resNoiseASR,{
-	var sig = PinkNoise.ar(\pNoiz.kr(0.01));
-	sig = HPF.ar(sig,100);
-	sig = LPF.ar(sig,3000);
-
-	sig = Ringz.ar(sig,\freq.kr(440),\dcy.kr(0.5)) + SinOsc.ar(\sineFreq.kr(440),mul: \sineMix.kr(0.1));
-	sig = (sig * \gain.kr(1)).tanh;
-
-	sig = sig * Env.asr(\atk.kr(0.01),1,\rls.kr(0.1),\curve.kr(-4)).kr(2,\gate.kr(1));
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
-	Out.ar(\out.kr(0),sig);
-}).add;
-
-SynthDef(\resNoisePerc,{
-	var sig = PinkNoise.ar(\pNoiz.kr(0.01));
-	sig = HPF.ar(sig,100);
-	sig = LPF.ar(sig,3000);
-
-	sig = Ringz.ar(sig,\freq.kr(440),\dcy.kr(0.5)) + SinOsc.ar(\sineFreq.kr(440),mul: \sineMix.kr(0.1));
-	sig = (sig * \gain.kr(1)).tanh;
-
-	sig = sig * Env.perc(\atk.kr(0.01),\rls.kr(0.1),1,\curve.kr(-4)).kr(2);
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
-	Out.ar(\out.kr(0),sig);
-}).add;
-
-
-SynthDef(\klik,{
-	var sig = PinkNoise.ar(1!2).sum;
-	sig = BPF.ar(sig,\fFreq.kr(5000),\rq.kr(0.1),\gain.kr(20));
-	sig = sig.fold2;
-	sig = sig * Env.perc(\atk.kr(0.01),\rls.kr(0.1),1,\curve.kr(-4)).kr(2);
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
-	OffsetOut.ar(\out.kr(0),sig);
-}).add;
-
-SynthDef(\noiseFilt,{
-	var sig = WhiteNoise.ar();
-	sig = RHPF.ar(sig,\hpFreq.kr(80),\hpQ.kr(1));
-	sig = RLPF.ar(sig,\lpFreq.kr(8000),\lpQ.kr(1));
-	sig = (sig + \offset.kr(0) * \gain.kr(1)).clip2;
-	sig = sig * Env.asr(\atk.kr(0.01),1,\rls.kr(0.1),\curve.kr(-4)).kr(2,\gate.kr(1));
-	sig = LeakDC.ar(sig);
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
-	OffsetOut.ar(\out.kr(0),sig);
-}).add;
-)
-
-
 // klik
 x = Synth(\klik,[\fFreq,10000,\gain,20,\rq,0.8,\atk,0.001,\rls,0.001,\amp,0.4])
 x = Synth(\asrSine,[\freq,8000,\gain,2,\atk,0.001,\rls,0.1,\amp,0.1])
 
 (
-Ppar([
+Ppar((4..19).collect({ |i| Click(96,4,2,inf,out: i).pattern}) ++ [
+
 	Pbind(
 		\instrument,\asrSine,
 		\dur,Pseq([25.5,0.5,6],inf) * 60/96,
@@ -364,15 +180,16 @@ Ppar([
 	),
 	Pbind(
 		\instrument,\klik,
-		\dur,Prand([Pseq([0.125],4),Pseq([0.125,0.125,0.25]),Pseq([0.125,0.25,0.125])],inf) * 60/96,
-		\type,\grain,
+		// \dur,Prand([Pseq([0.125],4),Pseq([0.125,0.125,0.25]),Pseq([0.125,0.25,0.125])],inf) * 60/96,
+		\dur,0.125 * 60/96,
+		\type,Pwrand([\rest,\grain],[0.2,0.8],inf),
 		\fFreq,12000,
 		\gain,20,
 		\rq,0.8,
 		\atk,0.001,
 		\rls,0.001,
 		// \amp,Prand([0.3,0.1,0.01],inf),
-		\amp,Pstep([0.3,Pwhite(0.01,0.1)],[0.125,0.375,0.125,0.375] * 60/96,inf),
+		\amp,Pstep([0.3,Pwhite(0.01,0.1)],[0.125,0.375] * 60/96,inf),
 		\pan, Prand([-0.8,-0.4,0.4,0.8],inf)
 	),
 	Pbind(
@@ -418,15 +235,6 @@ Ppar([
 ]).play
 )
 
-
-// breath?
-x = Synth(\klik,[\fFreq,500.rrand(1200),\gain,2,\rq,0.8,\atk,0.1,\rls,0.6,\amp,0.4])
-x.set(\gate,0)
-
-s.sendMsg("/n_free",11520)
-
-b = [0.25,0.5,0.25,0.5,0.5,0.5,0.5,0.25,0.25,0.5]* 60/96
-b * 1.5
 
 x = Synth(\resNoisePerc,[\atk,0.01,\rls,0.8,\curve,5.neg,\freq,3400,\dcy,0.3,\pNoiz,0.1,\sineFreq,3000,\sineMix,0.2,\amp,0.5,\gain,4])
 
@@ -499,8 +307,6 @@ Ndef(\noiz)[10] = \filter -> {|in|
 Ndef(\noiz).set(\wet10,0.2)
 Ndef(\noiz).set(\offset,0,\gain,2,\amp,-12.dbamp) // caps: \offset,1 (because it folds),\gain,20
 
-
-
 // ring mod
 (
 Ndef(\ringer,{
@@ -535,20 +341,6 @@ Pdef(\test,
 
 //Push synth
 (
-SynthDef(\push,{
-	var freq = \freq.kr(440);
-	var sig = LFTri.ar(freq);
-	sig = MidEQ.ar(sig,[freq * 4,freq * 3],0.5,8);
-	sig = MidEQ.ar(sig,freq * 2,1,4);
-	sig = RLPF.ar(sig,\fFreq.kr(800),\rq.kr(1));
-	sig = (sig * \gain.kr(1) * -8.dbamp).tanh;
-	sig = sig * Env.perc(\atk.kr(0.01),\rls.kr(0.1),1,\curve.kr(-4)).kr(2);
-
-	sig = Balance2.ar(sig[0],sig[1],\pan.kr(0),\amp.kr(0.5));
-	Out.ar(\out.kr(0),sig)
-}).add;
-)
-(
 Pdef(\test,
 	Pbind(
 		\instrument, \push,
@@ -556,8 +348,8 @@ Pdef(\test,
 		\dummy, Pstep([50,54],[16,16] * 60/150,inf),
 		\freq,(Pseq([[0,7,9,14]]++ [-2,2,9,12].dup(15),inf) + Pkey(\dummy)).midicps,
 		\fFreq,5000,
-		\rq,0.3,
-		\gain,3.5,
+		\rq,0.4,
+		\gain,2.5,
 		\atk,0.01,
 		\rls,1.5,
 		\curve,2.neg,
@@ -566,31 +358,11 @@ Pdef(\test,
 ).quant_(60/150).play
 )
 
-// onset Plucker
-
-
-
-(
-SynthDef(\pluck,{
-	var sig = SoundIn.ar(0); // later, In.ar() ?
-	var freq = \freq.kr(400);
-
-	sig = Pluck.ar(Hasher.ar(Sweep.ar(1)),1,0.2,freq.reciprocal,\dcy.kr(1),\coef.kr(0.5).clip2(0.999));
-	sig = MoogFF.ar(sig,\fFreq.kr(800),\fGain.kr(0));
-	sig = (sig * \gain.kr(1)).tanh;
-	sig = LeakDC.ar(sig,0.9);
-	DetectSilence.ar(sig,doneAction: 2);
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5));
-	OffsetOut.ar(\out.kr(0),sig)
-}).add
-)
 
 x = Synth(\pluck,[\dcy,2.neg,\freq,400.exprand(800),\coef,0.5.rrand(0.9),\fFreq,3000,\fGain,0.1,\gain,3,\amp,0.5])
 x.set(\dcy,4.neg,\coef,0.7,\fFreq,2400,\fGain,0.1,\gain,3,\amp,0.5)
 
 (
-
-
 //clicks
 Pdef(\test,
 	Pbind(
@@ -640,7 +412,6 @@ SynthDef(\comb,{
 	Out.ar(\out.kr(0),sig);
 }).add;
 
-0.1.reciprocal
 
 (
 Pdef(\test,
@@ -660,7 +431,6 @@ Pdef(\test,
 ).play
 )
 
-
 (
 Pbind(
 	\instrument,\glitchSine,
@@ -675,6 +445,20 @@ Pbind(
 ).play
 )
 
+.finDur
 
-2022-2007
+// outro pling plong
+
+(
+Pbind(
+	\instrument,\outro,
+	\dur,Pwhite(0.1,2),
+	\degree,Prand ((0..7),inf) * Prand([0.5,1],inf),
+	\atk,0.01,
+	\rls,Pwhite(0.4,0.8),
+	\gain,1,
+	\amp,0.1,
+	\pan,Pwhite(-0.8,0.8)
+).play
+)
 

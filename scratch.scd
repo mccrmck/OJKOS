@@ -1,30 +1,3 @@
-// emptyset intro
-(
-Ndef(\esNoise,{
-	var sig = PinkNoise.ar(1!3);
-	sig = BLowShelf.ar(sig,90,1,6);
-	sig = MidEQ.ar(sig,800,1,-12);
-	sig = (sig * \gain.kr(1)).clip2;
-	sig = LeakDC.ar(sig,0.99);
-	sig = HPF.ar(sig,200).tanh;
-	sig = Splay.ar(sig,1,\amp.kr(1));
-}).play;
-)
-
-Ndef(\esNoise)[10] = nil
-
-Ndef(\esNoise)[10] = \filter -> {|in|
-	var sig = HPF.ar(in,80);
-	sig = CombC.ar(sig,0.2,0.2);
-	sig = FreeVerb.ar(sig,1,0.9,1);
-	sig = BHiShelf.ar(sig,\fFreq.kr(3500),\rs.kr(1),-24);
-
-}
-
-Ndef(\esNoise).set(\wet10,0.5)
-Ndef(\esNoise).set(\gain,3,\amp,-16.dbamp)
-
-
 // create "presets" I can skip to - improvise for a bit, then skip to a sound....can possibly also be .xset
 // create global lag argument for all Control Names, so I can xset w/ a snap or with a s
 // every preset gets marked with an impact - tranceBD? Also happened when I lowered \hpFreq to the same freq as the VarSaw (40hZ)
@@ -72,96 +45,6 @@ Ndef(\emptySet).clear
 // granulating fred
 ~fred = Buffer.read(s,"/Users/mikemccormick/Desktop/controlStructures/fred/break.aiff")
 
-// Ndef bus behavior- can this be used to route clicks to multiple sources w/o duplicating click streams
-// a quick test looks like it's sample accurate when expanding a mono signal to 5 channels...
-
-b = Bus.audio(s,1);
-
-a = Click(60,repeats: inf,amp: 0.3,out:b)
-c = a.play
-c.stop
-
-Ndef(\test,{ In.ar(b) }).reshaping_(\elastic).play;
-
-Ndef(\test).playN([0])
-Ndef(\test).playN((0..5))
-Ndef(\test).playN([1]) // plays two channels starting at this index dvs. [0,1] -> [1,2]
-Ndef(\test).playN([0,2,3]) // wraps and maps 2 channels to 3 dvs. [0,1,0] -> [0,2,3]
-Ndef(\test).playN([0,2,3,4]) // wraps and maps 2 channels to 3 dvs. [0,1,0,1] -> [0,2,3,4]
-
-// klik
-x = Synth(\klik,[\fFreq,10000,\gain,20,\rq,0.8,\atk,0.001,\rls,0.001,\amp,0.4])
-x = Synth(\asrSine,[\freq,8000,\gain,2,\atk,0.001,\rls,0.1,\amp,0.1])
-
-(
-Ppar([
-
-	Pbind(
-		\instrument,\asrSine,
-		\dur,Pseq([25.5,0.5,6],inf) * 60/96,
-		\type,Pseq([\rest,\note,\rest],inf),
-		\legato,1,
-		\freq, Pseq([8000],inf),
-		\atk,0.001,
-		\rls,0.001,
-		\curve,4,
-		\gain,2,
-		\amp,Pseq([0.02],inf);
-	),
-
-	Pbind(
-		\instrument,\glitchSine,
-		\dur,Pseq([7.5,0.5],inf) * 60/96,
-		\type,Pseq([\rest,\note],inf),
-		\legato,0.85,
-		\freq, Pseq([3000],inf),
-		\rls,0.001,
-		\curve,10.neg,
-		\gain,2,
-		\amp,Pseq([0.04],inf);
-	),
-	Pbind(
-		\instrument,\glitchSine,
-		\dur,Pseq([7.5,0.5],inf) * 60/96,
-		\type,Pseq([\rest,\note],inf),
-		\legato,0.85,
-		\freq, Pwhite(1000,2000,inf),
-		\rls,0.001,
-		\curve,10.neg,
-		\gain,1,
-		\amp,Pseq([0.04],inf);
-	),
-	Pbind(
-		\instrument, \noiseFilt,
-		\dur,Pseq([7.5,0.5],inf) * 60/96,
-		\type,Pseq([\rest,\note],inf),
-		\legato,0.85,
-		\hpFreq,200,
-		\hpQ,1,
-		\lpFreq,4000,
-		\lpQ,1,
-
-		\atk,0.01,
-		\rls,0.01,
-		\curve,10.neg,
-		\offset,0,
-		\gain,Pseq([1],inf),
-		\amp,0.03
-	),
-	Pbind(
-		\instrument,\glitchSine,
-		\dur,Pseq([0.25,0.5,0.25,0.5,0.5,0.5,0.5,0.25,0.25,0.5],inf) * 60/96,
-		\type,Pseq(\note!5 ++ [\rest] ++ (\note!4),inf),
-		\legato,Pkey(\dur) * 1.3,
-		\freq, Pstep([[100,95],[95,90]],[8,8] * 60/96,inf),
-		\rls,0.001,
-		\curve,10,
-		\gain,4,
-		\amp,Pseq([0.05],inf);
-	)
-
-]).play
-)
 
 x = Synth(\resNoisePerc,[\atk,0.01,\rls,0.8,\curve,5.neg,\freq,3400,\dcy,0.3,\pNoiz,0.1,\sineFreq,3000,\sineMix,0.2,\amp,0.5,\gain,4])
 
@@ -176,73 +59,7 @@ x.set(\gate,0)
 x = 4.collect({|i| Synth(\resNoiseASR,[\atk,10,\freq,[62.5,66.5,71,80].midicps.at(i),\sineFreq,[62.5,66.5,71,80].midicps.at(i),\sineMix,0.1,\dcy,0.6,\pNoiz,0.01,\amp,0.2])})
 
 
-(
-Pmono(\resNoiseASR,
-	\dur,Pseq([10],1),
-	\freq,[190,200],
-	\gain,10,
-	\sineFreq,200  * 4,
-	\sineMix,0.05,
-	\atk,5,
-	\rls,5,
-	\amp,0.1,
-).play;
-)
 
-
-
-Pmono(\glitchSine,\dur,Pseq([0.0625],16*8) * 60/96,\freq,1000,\gain,4,\legato,1,\rls,0.001,\amp,0.01).play;
-
-(
-Pbind(
-	\instrument, \noiseFilt,
-	\dur,Pseq([0.25],inf) * 60/130,
-	\type,Pwrand([\rest,\note],[0.2,0.8],inf),
-	\legato,0.1,
-	\hpFreq,1000,
-	\hpQ,0.2,
-	\lpFreq,Pwhite(2000,3000),
-	\lpQ,0.8,
-	\atk,0.001,
-	\rls,0.1,
-	\curve,2.neg,
-	\offset,0.3,
-	\gain,50,
-	\amp,Pstep([0.01,0.1,0.01],[2,0.25,1.75] * 60/130,inf),
-).play
-)
-
-
-// some noiz shit!!
-
-(
-Ndef(\noiz,{
-	var sig = BrownNoise.ar(1!4,\offset.kr(0)).fold2;
-	sig = MidEQ.ar(sig,500,2,-12);
-	sig = (sig * \gain.kr(1)).clip2;
-	sig = LeakDC.ar(sig,0.999);
-	sig = Splay.ar(sig,1,\amp.kr(1));
-}).play;
-)
-
-Ndef(\noiz)[7] = nil
-
-Ndef(\noiz)[7] = \filter -> {|in|
-	var sig = CombC.ar(in,0.2,XLine.kr(0.2,0.03,4),);
-	sig = LeakDC.ar(sig);
-	sig + in
-}
-
-
-Ndef(\noiz)[10] = \filter -> {|in|
-	var sig = HPF.ar(in,80);
-	sig = FreeVerb.ar(sig,1,0.9,1);
-	sig = BHiShelf.ar(sig,\fFreq.kr(3500),\rs.kr(1),-24);
-
-}
-
-Ndef(\noiz).set(\wet10,0.2)
-Ndef(\noiz).set(\offset,0,\gain,2,\amp,-12.dbamp) // caps: \offset,1 (because it folds),\gain,20
 
 // ring mod
 (
@@ -276,38 +93,33 @@ Pdef(\test,
 ).play
 )
 
-//Push synth
-(
-Pdef(\test,
-	Pbind(
-		\instrument, \push,
-		\dur,Pseq([2,1,1,1,0.5,0.5,1,1,1,1,1,1,1,1,1,1],inf) * 60/150,
-		\dummy, Pstep([50,54],[16,16] * 60/150,inf),
-		\freq,(Pseq([[0,7,9,14]]++ [-2,2,9,12].dup(15),inf) + Pkey(\dummy)).midicps,
-		\fFreq,5000,
-		\rq,0.4,
-		\gain,2.5,
-		\atk,0.01,
-		\rls,1.5,
-		\curve,2.neg,
-		\amp,-20.dbamp,
-	)
-).quant_(60/150).play
-)
-
 
 x = Synth(\pluck,[\dcy,2.neg,\freq,400.exprand(800),\coef,0.5.rrand(0.9),\fFreq,3000,\fGain,0.1,\gain,3,\amp,0.5])
 x.set(\dcy,4.neg,\coef,0.7,\fFreq,2400,\fGain,0.1,\gain,3,\amp,0.5)
 
+
+SynthDef(\pluck,{
+	var sig = SoundIn.ar(0); // later, In.ar() ?
+	var freq = \freq.kr(400);
+
+	sig = Pluck.ar(Hasher.ar(Sweep.ar(1)),1,0.2,freq.reciprocal,\dcy.kr(1),\coef.kr(0.5).clip2(0.999));
+	sig = MoogFF.ar(sig,\fFreq.kr(800),\fGain.kr(0));
+	sig = (sig * \gain.kr(1)).tanh;
+	sig = LeakDC.ar(sig,0.9);
+	DetectSilence.ar(sig,doneAction: 2);
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5));
+	OffsetOut.ar(\out.kr(0),sig)
+}).add;
+
 (
-//clicks
+// smacks
 Pdef(\test,
 	Pbind(
 		\instrument, \pluck,
-		\dur,Prand([1/4,1/8],inf) * 60/96,
-		\freq,Pwhite(2000,4000),
+		\dur,Pwhite(0.2,0.4,inf) * 60/96,
+		\freq,Pwhite(400,800),
 		\dcy,4.neg,
-		\coef,0.8,
+		\coef,0.7,
 		\fFreq,Pkey(\freq) * 4,
 		\fGain,2,
 		\gain,4,
@@ -368,22 +180,6 @@ Pdef(\test,
 ).play
 )
 
-(
-Pbind(
-	\instrument,\glitchSine,
-	\dur,Pseq([0.25,0.5,0.25,0.5,0.5,0.5,0.5,0.25,0.25,0.5],inf) * 60/96,
-	\type,Pseq(\note!5 ++ [\rest] ++ (\note!4),inf),
-	\legato,Pkey(\dur) * 1.5 ,
-	\freq, Pseq([[100,95]],inf),
-	\rls,0.001,
-	\curve,10.neg,
-	\gain,4,
-	\amp,Pseq([0.2],inf);
-).play
-)
-
-.finDur
-
 // outro pling plong
 
 (
@@ -400,34 +196,32 @@ Pbind(
 )
 
 
+// riser?
 (
-SynthDef(\lfNoise,{
-	var sig = LFNoise0.ar(\freq.kr(440));
-	sig = CombC.ar(sig,0.2,\combFreq.kr(40).reciprocal,\dcy.kr(0.2));
-	sig = (sig + \offset.kr(0) * \gain.kr(1)).fold2;
-	sig = sig * Env.linen(\atk.kr(0.01),\sus.kr(0.1),\rls.kr(0.1),1,\curve.kr(0)).kr(2);
+SynthDef(\riser,{
+	var freq = \freq.kr(450);
+	var sig = VarSaw.ar(freq ,{1.0.rand}!4,width: \width.kr(0.5)).sum;
+	sig = sig * PinkNoise.ar(1);
+	sig = (sig * \gain.kr(1)).tanh;
+	sig = HPF.ar(sig,freq * 0.6);
+	sig = RLPF.ar(sig,freq * 2,\rq.kr(1));
+	sig = sig * Env.asr(\atk.kr(0.01),1,\rls.kr(0.1),\curve.kr(0)).kr(2,\gate.kr(1));
 	sig = LeakDC.ar(sig);
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
+	sig = Splay.ar(sig,\pan.kr(0),\amp.kr(0.5));
 	Out.ar(\out.kr(0),sig);
 }).add;
 )
 
-Pmono(\lfNoise,\dur,Pseq([0.0625],16*8) * 60/96,\freq,500,\gain,2,\legato,1,\rls,0.001,\amp,0.1).play;
-
 (
-Pbind(
-	\instrument,\lfNoise,
-	\dur,Prand([0.25],inf) * 60/130,
-	\type,Prand([\grain],inf),
-	\freq, Pexprand(10,1000,inf),
-	\combFreq,Prand([82,88],inf).midicps / Prand([1,4,8,2],inf),
-	\dcy,Prand([0.5,1,0.1],inf) * Prand([1,-1],inf),
-	\atk,0.001,
-	\sus,Prand([0.25,0.5,0.75],inf) * Pkey(\dur),
+Pmono(\riser,
+	\dur,0.05,
+	\freq,Pseg([0.5,1] * 66.midicps,[10],\exp),
+	\width,Pseg([0.5,0.1],[10],\exp),
+	\rq,Pseg([0.5,1],[10],\exp),
+	\amp,Pseg([0.05,0.5],[10],\exp),
+	\gain,2,
 	\rls,0.001,
-	\gain,Pwhite(1,15,inf),
-	\offset,0,
-	\pan,Pseq([[-1,1]],inf),
-	\amp, 0.05,
 ).play
 )
+
+

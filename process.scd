@@ -1,14 +1,12 @@
 
 
 Ndef(\foley,{
-	var sig	= SoundIn.ar(\inBus.kr(0));
+	var sig	= SoundIn.ar(\inBus.kr(18));
 	sig = Compander.ar(sig,sig,\compThresh.kr(0.5),1,\ratio.kr(1).reciprocal,\compAtk.kr(0.01),\compRls.kr(0.1));
-
+	sig = DelayC.ar(sig,1.0,\dly.kr(0.1));
 }).stop
 
-
 // make parProcess Dict for oneshot Synths!
-
 
 
 
@@ -41,15 +39,11 @@ Ndef(\foley,{
 	},
 ]
 
-
 Ndef(\foley).play.filter(2,~process['ring'])
 Ndef(\foley).put(2,nil).stop
 Ndef(\foley).objects
 
 Ndef(\foley).set(\rmFreq,50)
-
-
-
 
 
 // filter maker? How can I switch things very quickly but keep track of index number

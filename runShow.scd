@@ -55,7 +55,7 @@ var lemurAddr = NetAddr("192.168.0.101", 8000);
 //server init stuff
 server.options.numInputBusChannels = 32;
 server.options.numOutputBusChannels = 32;
-// server.options.device = "Dante Virtual Soundcard";
+server.options.device = "Dante Virtual Soundcard";
 
 OJKOS(inputs,clickOuts,synthOuts,processOuts,lemurAddr);
 )
@@ -76,18 +76,12 @@ Safety.disable
 ~tune = true
 
 
-c = OJKOS.cueFrom('pushA','pushA',true,true,false)
-Click.loopCues['tuneLoop'] = false
-c.play
-c.stop
-
 OJKOS.sections[15]
 p = Ppar([OJKOS.score[15]['pats'][1]])
 p.play
 
 
-
-
-SoundCheck(32,[4,6,5,18,19,7,8,9,10,11,12,17,16,15,14,13]).stop
-SoundCheck(4,).stop
+SoundCheck(32).sweep(0.2)
+SoundCheck(32,[4,6,5,18,19,7,8,9,10,11,12,17,16,15,14,13]).sweep(0.01)
+SoundCheck(32).clear
 

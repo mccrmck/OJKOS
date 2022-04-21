@@ -44,7 +44,7 @@ OJKOS {
 			server.sync;
 
 			tranceBuf = Buffer.alloc(server,server.sampleRate * 15 * 60/142);
-			// elseBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8)}); // shouold these be timed differently to match what they record?
+			// elseBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8,2)}); // shouold these be timed differently to match what they record?
 			// recBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8)});
 
 			server.sync;
@@ -70,7 +70,7 @@ OJKOS {
 		if(countIn,{
 			if(score[fromIndex]['countIn'].flat.size > 0, {
 				var count = score[fromIndex]['countIn'].deepCollect(2,{ |clk| clk.pattern });
-				count = count.collect({ |clk| Pseq(clk) });                               // test this!! especially with multiple streams
+				count = count.collect({ |clk| Pseq(clk) });
 				countInArray = countInArray.add( Ppar( count ) );
 			})
 		});
@@ -98,7 +98,6 @@ OJKOS {
 
 			cuedArray = cuedArray.add( Ppar( sectionArray ) );
 		});
-
 
 		^Pdef("%_%|%|%|%".format(from, to, click, pats, countIn).asSymbol,
 			Pseq( countInArray ++ cuedArray )

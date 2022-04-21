@@ -89,14 +89,6 @@ SynthDef(\pluck,{
 	OffsetOut.ar(\out.kr(0),sig)
 }).add;
 
-SynthDef(\asrSine,{
-	var sig	= SinOsc.ar(\freq.kr(440));
-	sig = (sig * \gain.kr(1)).clip2;
-	sig = sig * Env.asr(\atk.kr(0.01),1,\rls.kr(0.1),\curve.kr(0)).kr(2,\gate.kr(1));
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
-	OffsetOut.ar(\out.kr(0),sig);
-}).add;
-
 SynthDef(\glitchSine,{
 	var freq = \freq.kr(440);
 	var sig	= SinOsc.ar(0, (Sweep.ar(1, 2pi * freq) + (pi/3)).wrap(-pi, pi));
@@ -120,7 +112,7 @@ SynthDef(\resNoiseASR,{
 	Out.ar(\out.kr(0),sig);
 }).add;
 
-SynthDef(\resNoisePerc,{
+SynthDef(\resNoisePerc,{                                       // is this used??
 	var sig = PinkNoise.ar(\pNoiz.kr(0.01));
 	sig = HPF.ar(sig,100);
 	sig = LPF.ar(sig,3000);
@@ -171,11 +163,13 @@ SynthDef(\pushSines,{
 	var freqs = \freqs.kr(440!4);
 	var sig	= Klang.ar(`[freqs,\amps.kr(0.1!4)]);
 
-	sig = HPF.ar(sig,150);
-	sig = MidEQ.ar(sig,350,0.3,-6);
-	sig = RLPF.ar(sig,freqs[0] * 4,0.2);
-
+	sig = HPF.ar(sig,freqs[0] * 1.5);
+	sig = Latch.ar(sig,Impulse.ar(\sRate.kr(1000)));
+	sig = RLPF.ar(sig,freqs[0] * 4,0.6);
+	sig = MidEQ.ar(sig,freqs[0] * 3,0.5,-4);
 	sig = (sig * \gain.kr(1)).tanh;
+	sig = Compander.ar(sig,sig,0.5,1,1/4,0.01,0.1,4);
+
 	sig = sig * Env.perc(\atk.kr(0.01),\rls.kr(0.1),1,\curve.kr(0)).kr(2);
 	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
 	OffsetOut.ar(\out.kr(0),sig);
@@ -192,11 +186,9 @@ SynthDef(\pushSines,{
 
 SynthDef(\outro,{
 	var sig = SinOsc.ar(\freq.kr(440));
-	// sig = sig * PinkNoise.ar(0.5!2);
 	sig = (sig * \gain.kr(1)).tanh;
 	sig = LPF.ar(sig,2500);
 
-	// sig = sig * Env([0,1,0],[\atk.kr(0.01),\rls.kr(0.1)],\curve.kr(-4)).kr(2,\gate.kr(1));
 	sig = sig * Env.perc(\atk.kr(0.01),\rls.kr(0.1),1,\curve.kr(-4)).kr(2);
 	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
 	Out.ar(\out.kr(0),sig);

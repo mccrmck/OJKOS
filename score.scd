@@ -1,4 +1,4 @@
-//////////// == CONTROL STRUCTURES: SCORE == ////////////
+=//////////// == CONTROL STRUCTURES: SCORE == ////////////
 
 var cueKeys = ['introLoop','tuneLoop','ifStart','ifStartRM'];
 var outs = OJKOS.clickOutBus;
@@ -39,14 +39,14 @@ var pats = OJKOS.patterns;
 	(
 		name: 'breakStart',
 		countIn: [[ ClickConCat(1,Click(133.125,2,1,2),Click(133.125,1,1,4)).out_([ outs['tina'],outs['arneMartin'],outs['mike'] ]) ]],
-		click: [[ Click(133.125,4,1,6).out_([ outs['tina'],outs['arneMartin'],outs['mike'] ]) ]],
+		click: [[ ClickConCat(1,Click(133.125,4,1,4),ClickCue(133.125,2,1,2),ClickCue(133.125,1,1,4)).out_([ outs['tina'],outs['arneMartin'],outs['mike'] ]) ]],
 		pats: [ pats['tranceKickSlo'].finDur(60/133.125 * 24) ],
 	),
 	(
 		name: 'breakA',
 		countIn: [[ ClickConCat(1,Click(133.125,2,1,2),Click(133.125,1,1,4)).out_([ outs['tina'],outs['arneMartin'],outs['mike'] ])]],
 		click: [
-			[ Click(133.125,3,1,10).out_([ outs['tina'],outs['arneMartin'],outs['mike'] ]),ClickConCat(18,Click(133.125 * 2,3),Click(133.125 * 2,2)).out_([ outs['tina'],outs['arneMartin'],outs['mike'] ]) ],
+			[ ClickConCat(1,Click(133.125,3,1,8),ClickCue(133.125,3,1),ClickCue(133.125,1,1,3)).out_([ outs['tina'],outs['arneMartin'],outs['mike'] ]),ClickConCat(18,Click(133.125 * 2,3),Click(133.125 * 2,2)).out_([ outs['tina'],outs['arneMartin'],outs['mike'] ]) ],
 			[ ClickRest(133.125,3,10),ClickRest(133.125 * 2,5,15),ClickConCat(1,ClickCue(142,2,1,2),ClickCue(142,1,1,4)).out_([ outs['maria'],outs['tancred'],outs['magnus'],outs['oskar'] ]) ],
 		],
 		pats: [ pats['tranceKickSlo'].finDur(60/133.125 * 75)],
@@ -70,14 +70,14 @@ var pats = OJKOS.patterns;
 	),
 	(
 		name: 'breakD',
-		countIn: [[ ClickConCat(1,Click(142,2,1,2),Click(142,1,1,4)).out_(outs['all']) ]],
-		click: [[ ClickConCat(1,Click(142,4,1,24),Click(142,4,1,3),ClickCue(142,2,1,2),ClickCue(142,1,1,4)).out_(outs['all']) ]],
+		countIn: [[ ClickConCat(1,Click(142,2,1,2),Click(142,1,1,4)).out_([ outs['alexander'],outs['oskar'],outs['mike'] ]) ]],
+		click: [[ Click(142,4,1,24).out_([ outs['alexander'],outs['oskar'],outs['mike'] ]),ClickConCat(1,Click(142,4,1,3),ClickCue(142,2,1,2),ClickCue(142,1,1,4)).out_([ outs['knut'],outs['arneMartin'],outs['alexander'],outs['oskar'],outs['mike'] ]) ]],
 		pats: [ pats['tranceGate'].finDur(60/142 * 4 * 24), pats['tranceKickFast'].finDur(60/142 * 4 * 29) ],
 	),
 	(
 		name: 'breakE',
-		countIn: [[ ClickConCat(1,Click(142,2,1,2),Click(142,1,1,4)).out_(outs['all']) ]],
-		click: [[ Click(142,4,1,24).out_(outs['all']) ]],
+		countIn: [[ ClickConCat(1,Click(142,2,1,2),Click(142,1,1,4)).out_([ outs['knut'],outs['arneMartin'],outs['alexander'],outs['oskar'],outs['mike'] ]) ]],
+		click: [[ Click(142,4,1,24).out_([ outs['knut'],outs['arneMartin'],outs['alexander'],outs['oskar'],outs['mike'] ]) ]],
 		pats: [ pats['tranceGate'].finDur(60/142 * 4 * 24), pats['tranceKickFast'].finDur(60/142 * 4 * 24) ],
 	),
 	(
@@ -95,7 +95,10 @@ var pats = OJKOS.patterns;
 	(
 		name: 'breakH',
 		countIn: [[ ClickConCat(1,Click(142,2,1,2),Click(142,1,1,4)).out_(outs['all']) ]],
-		click: [[ Click(142,4,1,16).out_(outs['all']) ]],
+		click: [
+			[ Click(142,4,1,16).out_(outs['all'].reject({ |i| i == outs['arneMartin'] }) ) ],
+			[ ClickConCat(1,Click(142,4,1,14),ClickCue(142,2,1,2),ClickCue(142,1,1,4)).out_(outs['arneMartin']) ]
+		],
 		pats: [ pats['tranceKickFast'].finDur(60/142 * 4 * 16) ],
 	),
 	(
@@ -128,15 +131,15 @@ var pats = OJKOS.patterns;
 		click: [
 			[ ClickConCat(1,Click(96,4,1,26),ClickCue(96,2,1,2),ClickCue(96,1,1,4)).out_([ outs['henriette'], outs['tina'], outs['mike'] ]) ],
 			[ Click(144,3,1,32).out_(outs['camilla']) ],                                         // does this need a cue to end?
-			[ ClickConCat(16,Click(120,3,1),Click(120,2,1)).out_(outs['maria']) ],             // does this need a cue to end?
-			[ ClickConCat(16,Click(168,4,1),Click(168,3,1)).out_(outs['sigrid']) ],             // does this need a cue to end?
+			[ ClickConCat(16,Click(120,3,1),Click(120,2,1)).out_(outs['maria']) ],               // does this need a cue to end?
+			[ ClickConCat(16,Click(168,4,1),Click(168,3,1)).out_(outs['sigrid']) ],              // does this need a cue to end?
 		],
 		pats: [],
 	),(
 		name: 'caseC',
 		countIn: [[ ClickConCat(1,Click(96,2,1,2),Click(96,1,1,4)).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
-		click: [[ Click(96,4,1,16).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
-		pats: [ pats['thumpSine'].finDur(60/96 * 4 * 16), pats['klikC'], pats['hiSine'].finDur(60/96 * 4 * 16), pats['resNoise'].finDur(60/96 * 4 * 15) ],
+		click: [[ ClickConCat(1,Click(96,4,1,14),ClickCue(96,2,1,2),ClickCue(96,1,1,4)).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
+		pats: [ pats['thumpSine'].finDur(60/96 * 4 * 16), pats['klikC'], pats['hiSine'].finDur(60/96 * 4 * 16), pats['resNoiseC'].finDur(60/96 * 4 * 15) ],
 	),(
 		name: 'caseD',
 		countIn: [[ ClickConCat(1,Click(96,2,1,2),Click(96,1,1,4)).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
@@ -253,7 +256,7 @@ var pats = OJKOS.patterns;
 	),(
 		name: 'pushB',
 		countIn: [[ ClickConCat(1,Click(150,2,1,2),Click(150,1,1,4)).out_([ outs['sigrid'],outs['lyder'],outs['andreas'],outs['knut'],outs['arneMartin'],outs['alexander'],outs['oskar'],outs['mike'] ]) ]],
-		click: [[ClickConCat(1,Click(150,4,1,14),ClickCue(150,2,1,2),ClickCue(150,1,1,4)).out_([ outs['sigrid'],outs['lyder'],outs['andreas'],outs['knut'],outs['arneMartin'],outs['alexander'],outs['oskar'],outs['mike'] ]) ]],
+		click: [[ ClickConCat(1,Click(150,4,1,14),ClickCue(150,2,1,2),ClickCue(150,1,1,4)).out_([ outs['sigrid'],outs['lyder'],outs['andreas'],outs['knut'],outs['arneMartin'],outs['alexander'],outs['oskar'],outs['mike'] ]) ]],
 		pats: [],
 	),(
 		name: 'pushC',
@@ -415,7 +418,7 @@ var pats = OJKOS.patterns;
 		pats: [],
 	),(
 		name: 'popK',
-		countIn: [[ ClickConCat(1,Click(60,2,1,2),Click(60,1,1,4)).out_([ outs['sigrid'],outs['tina'],outs['richard'],outs['lyder'],outs['tancred'],outs['andreas'],outs['magnus'],outs['johannes'],outs['arneMartin'],outs['alexander'],outs['oskar'],outs['mike'] ]) ]],
+		countIn: [[ ClickConCat(1,Click(60,2,2,2),Click(60,1,2,4)).out_([ outs['sigrid'],outs['tina'],outs['richard'],outs['lyder'],outs['tancred'],outs['andreas'],outs['magnus'],outs['johannes'],outs['arneMartin'],outs['alexander'],outs['oskar'],outs['mike'] ]) ]],
 		click: [[
 			ClickConCat(1,
 				ClickEnv([60,55],4,2),ClickEnv([55,50],4,2),
@@ -505,7 +508,7 @@ var pats = OJKOS.patterns;
 	(
 		name: 'outroStand',
 		countIn: [[ ]],
-		click: [[ Click(80,4).out( outs['all'] ) ]],
+		click: [[ Click(80,4).out( outs['all'] ) ]],                   // change this!!
 		pats: [],
 	),(
 		name: 'outroBow',

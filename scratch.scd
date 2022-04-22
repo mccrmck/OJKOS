@@ -1,47 +1,5 @@
-// create "presets" I can skip to - improvise for a bit, then skip to a sound....can possibly also be .xset
-// create global lag argument for all Control Names, so I can xset w/ a snap or with a s
-// every preset gets marked with an impact - tranceBD? Also happened when I lowered \hpFreq to the same freq as the VarSaw (40hZ)
-// as things go on and on, the changes happen more and more often
-// find one of these presets to end on, this will also bring us to another section, presumably with the ensemble
-// must be able to side chain the output with kick drum
-// should the whole thing be highshelfed a bit? Maybe remove some of the harshness? Needs to be checked on a PA...
-// maybe this should be a hybrid approach, with patterns (\type, \set) controlling pitch, width, etc. and busses controlling the stuff I want to play...
-// or I could add some LFOs??
 
-(
-Ndef(\emptySet,{
-	var sig, freq = \freq.kr(40);
-	var harms = (1..4);
-	var mid = VarSaw.ar(freq * harms,harms.reciprocal.reverse,\width.kr(0.5),harms.reciprocal).sum;
-	var side = PinkNoise.ar(1,\offset.kr(0)).clip2;
-	mid = (mid * \midGain.kr(1)).tanh;
-
-	side = LeakDC.ar( HPF.ar( HPF.ar(side,90),90) ) ;
-	side = (side * \sideGain.kr(1)).fold2;
-
-	sig = MS2Stereo.ar([mid * \midAmp.kr(1),side * \sideAmp.kr(0.8)]);
-	sig = (sig * \gain.kr(1));
-
-	sig = RHPF.ar(sig,\hpFreq.kr(80),\hpQ.kr(1));
-	sig = RLPF.ar(sig,\lpFreq.kr(8000),\lpQ.kr(1));
-
-	sig = MidEQ.ar(sig,500,1,6);
-
-	sig = sig.tanh;
-
-	sig = Compander.ar(sig,In.ar(\sChain.kr(),1),\thresh.kr(0.5),1,\ratio.kr().reciprocal,\cAtk.kr(0.01),\cRls.kr(0.1)); // must test this!!
-
-	sig = Balance2.ar(sig[0],sig[1],\pan.kr(0),\amp.kr(0.5));
-
-}).play;
-)
-(1..4).reciprocal.reverse
-
-// 28.midicps == low
-Ndef(\emptySet).set(\freq,28.midicps,\lpFreq,8000,\lpQ,0.2,\hpFreq,40,\hpQ,1,\midGain,1,\sideGain,12,\offset,0.9,\gain,2,\width,0.3,\amp,0.2)
-Ndef(\emptySet).clear
-
-
+s
 // granulating fred
 ~fred = Buffer.read(s,"/Users/mikemccormick/Desktop/controlStructures/fred/break.aiff")
 
@@ -57,8 +15,6 @@ x.set(\freq,1200,\gain,4,\amp,0.01)
 x.set(\gate,0)
 
 x = 4.collect({|i| Synth(\resNoiseASR,[\atk,10,\freq,[62.5,66.5,71,80].midicps.at(i),\sineFreq,[62.5,66.5,71,80].midicps.at(i),\sineMix,0.1,\dcy,0.6,\pNoiz,0.01,\amp,0.2])})
-
-
 
 
 // ring mod
@@ -82,15 +38,168 @@ Ndef(\ringer).set(\modFreq,200)
 
 
 (
-Pdef(\test,
+e = Pseq([
+	Click(120,4).pattern,
 	Pbind(
-		\type,\set,
-		\id, Ndef(\ringer).nodeID,
-		\args,#[\modFreq],
-		\dur, 0.1,
-		\modFreq,Pwhite(40.0,400,4) ++ 4
+		\instrument,\ringSeq,
+		\dur,Pseq([1],11) * 60/120,
+		\legato,1,
+		// \inBus, Pseq([ ins['knut'],ins['henriette'] ],inf),
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([0.5],4) * 60/120,
+		\legato,1,
+		// \inBus, Pdup(2,Pseq([ ins['henriette'],ins['knut'] ],1)),
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([1],5) * 60/120,
+		\legato,1,
+		// \inBus, Pseq([ ins['henriette'],ins['knut'] ],inf),
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([0.5],2) * 60/120,
+		\legato,1,
+		// \inBus, Pseq([ ins['knut'] ],2),
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([60/120, 60/90, 60/120],1) ,
+		\legato,1,
+		// \inBus, Pseq([ ins['henriette'],ins['knut'] ],inf),
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([0.25],4) * 60/120,
+		\legato,1,
+		// \inBus, ins['knut'],
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq(1!6 ++ (2/3!4) ++ (1!5),1) * 60/120,
+		\legato,1,
+		// \inBus, Pseq([ ins['henriette'],ins['knut'] ],inf),
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([1/3],3) * 60/120,
+		\legato,1,
+		// \inBus, ins['knut'],
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([1],3) * 60/120,
+		\legato,1,
+		// \inBus, Pseq([ ins['henriette'],ins['knut'] ],inf),
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([0.5,0.25,0.25],1) * 60/70,
+		\legato,1,
+		// \inBus, ins['knut'],
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([1],6) * 60/120,
+		\legato,1,
+		// \inBus, Pseq([ ins['henriette'],ins['knut'] ],inf),
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([60/150,60/150,60/210,60/150],1),
+		\legato,1,
+		// \inBus, Pseq([ ins['henriette'],ins['knut'] ],inf),
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([1],12) * 60/120,
+		\legato,1,
+		// \inBus, Pseq([ ins['henriette'],ins['knut'] ],inf),
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([60/70],1),
+		\legato,1,
+		// \inBus, ins['henriette'],
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+]).play
+)
+
+(
+f = Pseq([
+	Click(100,4).pattern,
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([2/9,2/9,5/9],1) * 60/100,
+		\legato,1,
+		// \inBus, ins['knut'],
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([1],12) * 60/120,
+		\legato,1,
+		// \inBus, Pseq([ ins['henriette'],ins['knut'] ],inf),
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
+	),
+	Pbind(
+		\instrument,\ringSeq,
+		\dur,Pseq([1],5) * 60/100,
+		\legato,1,
+		// \inBus, Pseq([ ins['henriette'],ins['knut'] ],inf),
+		\inBus, Pseq([0],inf),
+		\modFreq,Pwhite(400,2000),
+		\amp,0.5,
 	)
-).play
+]).play
 )
 
 
@@ -99,7 +208,6 @@ x.set(\dcy,4.neg,\coef,0.7,\fFreq,2400,\fGain,0.1,\gain,3,\amp,0.5)
 
 
 SynthDef(\pluck,{
-	var sig = SoundIn.ar(0); // later, In.ar() ?
 	var freq = \freq.kr(400);
 
 	sig = Pluck.ar(Hasher.ar(Sweep.ar(1)),1,0.2,freq.reciprocal,\dcy.kr(1),\coef.kr(0.5).clip2(0.999));
@@ -133,15 +241,15 @@ Pdef(\test).stop
 
 // fft Freeze/comb
 Ndef(\freezeComb,{
-	var bufnum = \bufnum.kr;
+	var bufnum = \bufnum.kr();
 	// var sig = PlayBuf.ar(1,bufnum,BufRateScale.kr(bufnum) * 2,startPos: 0.1 * BufFrames.kr(bufnum));
 	var frames = \frames.kr(4096);
 
+	sig = HPF.ar(sig,400);
 	sig = FFT(LocalBuf(frames),sig);
 	sig = PV_Freeze(sig,1);
 	sig = PV_RectComb(sig,32,1,\width.kr(0.1));
 	sig = IFFT(sig);
-	sig = HPF.ar(sig,400);
 
 	sig = Pan2.ar(sig,\pan.ar(0),\amp.kr(0.5));
 

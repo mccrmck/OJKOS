@@ -34,6 +34,8 @@ OJKOS {
 			// load buffers
 			pbTracks = PathName(path ++ "audio").entries.collect({ |entry|
 
+				if(entry.isFolder)
+
 				Buffer.read(server,entry.fullPath);
 
 			});

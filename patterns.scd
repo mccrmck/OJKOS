@@ -227,7 +227,7 @@ IdentityDictionary[                    // these could also be functions??? so I 
 		)
 	]),
 
-	'resNoise' -> Pmono(\resNoiseASR,
+	'resNoiseC' -> Pmono(\resNoiseASR,
 		\dur,0.01,
 		\freq,[190,200] * 2,
 		\gain,Pseg([4,10,4],[12,15],\lin,inf),
@@ -411,7 +411,6 @@ IdentityDictionary[                    // these could also be functions??? so I 
 			\out,OJKOS.synthOutBus
 		)
 	]),
-
 
 	/*=============   try   ==============*/
 

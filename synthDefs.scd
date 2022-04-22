@@ -77,7 +77,6 @@ SynthDef(\tranceGate,{
 /*=============   case   ==============*/
 
 SynthDef(\pluck,{
-	var sig = SoundIn.ar(0); // later, In.ar() ?
 	var freq = \freq.kr(400);
 
 	sig = Pluck.ar(Hasher.ar(Sweep.ar(1)),1,0.2,freq.reciprocal,\dcy.kr(1),\coef.kr(0.5).clip2(0.999));
@@ -157,6 +156,12 @@ SynthDef(\lfNoise,{
 
 /*=============   try   ==============*/
 
+// JI chords
+// bass sound
+// impact?
+
+// processing for knut?
+
 /*=============   push   ==============*/
 
 SynthDef(\pushSines,{
@@ -175,10 +180,20 @@ SynthDef(\pushSines,{
 	OffsetOut.ar(\out.kr(0),sig);
 }).add;
 
-
 /*=============   pop   ==============*/
 
 /*=============   if   ==============*/
+
+SynthDef(\ringSeq,{
+	var sig = SoundIn.ar(\inBus.kr(0));
+	var mod = SinOsc.ar(\modFreq.kr(100,0.05));
+
+	sig = sig * mod;
+	sig = LeakDC.ar(sig);
+	sig = sig * Env.asr(\atk.kr(0.001),1,\rls.kr(0.001),\curve.kr(-4)).kr(2,\gate.kr(1));
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5));
+	Out.ar(\out.kr(0),sig)
+}).add;
 
 /*=============   else   ==============*/
 

@@ -23,6 +23,13 @@ SynthDef(\recorderTrance,{
 	RecordBuf.ar(sig,\bufnum.kr(),loop:0,doneAction: 2)
 }).add;
 
+SynthDef(\stereoPlayback,{
+	var bufnum = \bufnum.kr();
+	var sig = PlayBuf.ar(2,bufnum,BufRateScale.kr(bufnum),doneAction: 2);
+	sig = Balance2.ar(sig[0],sig[1],\pan.kr(0),\amp.kr(1));
+	OffsetOut.ar(\out.kr(0),sig);
+}).add;
+
 /*=============   intro   ==============*/
 
 SynthDef(\tune,{
@@ -79,7 +86,7 @@ SynthDef(\tranceGate,{
 SynthDef(\pluck,{
 	var freq = \freq.kr(400);
 
-	sig = Pluck.ar(Hasher.ar(Sweep.ar(1)),1,0.2,freq.reciprocal,\dcy.kr(1),\coef.kr(0.5).clip2(0.999));
+	var sig = Pluck.ar(Hasher.ar(Sweep.ar(1)),1,0.2,freq.reciprocal,\dcy.kr(1),\coef.kr(0.5).clip2(0.999));
 	sig = MoogFF.ar(sig,\fFreq.kr(800),\fGain.kr(0));
 	sig = (sig * \gain.kr(1)).tanh;
 	sig = LeakDC.ar(sig,0.9);

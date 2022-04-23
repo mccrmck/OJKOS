@@ -30,7 +30,14 @@ var chords = Dictionary[
 	\eSus  -> [[52,59,61,66]],
 ];
 
-IdentityDictionary[                    // these could also be functions??? so I can pass args into Pbind keys???!?!??!
+IdentityDictionary[
+
+	'recBand' -> Pbind(
+		\instrument,\recorderStereo,
+		\dur,Pseq([0],1),
+		\inBus,[[ ins['mains'], ins['mains'] + 1 ]],
+		\bufnum,Pfunc({ OJKOS.nextElseBuf }),
+	),
 
 	/*=============   intro   ==============*/
 
@@ -53,23 +60,55 @@ IdentityDictionary[                    // these could also be functions??? so I 
 
 	/*=============   break   ==============*/
 
-	'breakFred' -> Pbind(
+	'introBreak' -> Pbind(
 		\instrument,\grainPerc,
-		\dur,30/142,
-		\type,\grain,
-		\bufnum,~fred,     // obviously change this!!!
+		\dur,Pseq([0.5,0.5],24 + 15) * 60/133.125,
+		\type,\note,
+		\bufnum,OJKOS.pbTracks['break'],
 		\rate,1,
-		// \pos,Pwhite(0.2,0.8,inf),
-		\pos,Pseq(([0.25,0.4,0.5]!2 ++ [0.25,0.5]).flat,inf), // descending fminor triad
+		\pos,Pseq([0.25,0.4,0.5],inf), // descending fminor triad
 		// \gain,Pseg([1,40],[40],\exp,inf),
-		\gain,80, //play with this to go from kermit the frog to formant synth to drive!!
+		\gain,80,                                      // map this to a bus and wrap in a Pwhile to play live - go from kermit the frog to formant synth to drive!!
 		\atk,0.01,
 		\rls,0.2,
 		\curve,5.neg,
 		\pan,0,
-		\amp,0.3,
+		\amp,0.1,
 		\out,OJKOS.synthOutBus
 	),
+
+	'breakFred' -> Pseq([
+		Pbind(
+			\instrument,\grainPerc,
+			\dur,Pseq([0.5,0.5],24 + 15) * 60/133.125,
+			\type,\note,
+			\bufnum,OJKOS.pbTracks['break'],
+			\rate,1,
+			\pos,Pseq([0.25,0.4,0.5],inf), // descending fminor triad
+			\gain,80,
+			\atk,0.01,
+			\rls,0.2,
+			\curve,5.neg,
+			\pan,0,
+			\amp,0.1,
+			\out,OJKOS.synthOutBus
+		),
+		Pbind(
+			\instrument,\grainPerc,
+			\dur,Pseq([0.5,0.5],15) * 60/133.125,
+			\type,\note,
+			\bufnum,OJKOS.pbTracks['break'],
+			\rate,1,
+			\pos,Pseq([0.25,0.4,0.5],inf), // descending fminor triad
+			\gain,80,
+			\atk,0.01,
+			\rls,0.2,
+			\curve,5.neg,
+			\pan,0,
+			\amp,Pseg([1,0.1],15 * 60/133.125,\exp) * 0.1,
+			\out,OJKOS.synthOutBus
+		),
+	]),
 
 	'tranceKickSlo' -> Pbind(
 		\instrument,\bdSynth,
@@ -731,12 +770,358 @@ IdentityDictionary[                    // these could also be functions??? so I 
 		\out,OJKOS.synthOutBus
 	),
 
+	'fredPop' -> Pseq([
+		ClickRest(135,4,15).pattern,
+		ClickRest(90,2).pattern,
+		Pbind(
+			\instrument, \stereoPlayback,
+			\bufnum,OJKOS.pbTracks['pop'],
+			\amp,0.1,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
 	/*=============   pop   ==============*/
 
+
 	/*=============   if   ===============*/
+
+
+	'ifEKnut' -> Pseq([
+		ClickRest(120,4).pattern,
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],11) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([1,0],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1,0.5,0.5],1) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([0,1,1],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],5) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([0,1],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([0.5],2) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([60/120, 60/90, 60/120]),
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([0,1],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(                     // mm. 156
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([0.25],4) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq(1!6 ++ (2/3!4) ++ (1!5),1) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([0,1],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1/3],3) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],3) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([0,1],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([0.25,0.25,0.5],1) * 60/70,
+			\modFreq,Pwhite(200, 3000),
+			\amp,0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(                                   // mm. 177
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],6) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([0,1],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([60/150,60/150,60/210,60/150],1),
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([0,1],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],12) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([0,1],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([60/70],1),
+			\modFreq,Pwhite(200, 3000),
+			\amp,0,
+			\out, OJKOS.fxOutBus,
+		),
+	]),
+
+	'ifEHenriette' -> Pseq([
+		ClickRest(120,4).pattern,
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],11) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([0,1],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([0.5,0.5,1],1) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([1,1,0],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],7) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([1,0],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([60/90],1),
+			\modFreq,Pwhite(200, 3000),
+			\amp,0,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(                     // mm. 155
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],8) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([1,0],inf) * 0.2,
+			\out,OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq((2/3!4) ++ (1!9),1) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([1,0],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],1) * 60/70,
+			\modFreq,Pwhite(200, 3000),
+			\amp,0,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(                                 // mm. 177
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],6) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([1,0],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([60/150,60/150,60/210,60/150],1),
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([1,0],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],12) * 60/120,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([1,0],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([60/70],1),
+			\modFreq,Pwhite(200, 3000),
+			\amp,0.2,
+			\out, OJKOS.fxOutBus,
+		),
+	]),
+
+	'ifFKnut' -> Pseq([
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([0.5,0.5,2/9,2/9,5/9],1) * 60/100,
+			\legato,1,
+			\modFreq,Pwhite(200, 3000),
+			\amp,0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],12) * 60/120,
+			\legato,1,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([0,1],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],5) * 60/100,
+			\legato,1,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([0,1],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		)
+	]),
+
+	'ifFHenriette' -> Pseq([
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],2) * 60/100,
+			\legato,1,
+			\modFreq,Pwhite(200, 3000),
+			\amp,0,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],12) * 60/120,
+			\legato,1,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([1,0],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		),
+		Pbind(
+			\type, \set,
+			\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+			\args,#[\modFreq,\amp],
+			\dur,Pseq([1],5) * 60/100,
+			\legato,1,
+			\modFreq,Pwhite(200, 3000),
+			\amp,Pseq([1,0],inf) * 0.2,
+			\out, OJKOS.fxOutBus,
+		)
+	]),
+
+	'ifGKnut' -> Pbind(
+		\type, \set,
+		\id, Pfunc({ Ndef(\ringerKnut).nodeID }),
+		\args,#[\modFreq,\amp],
+		\dur,Pseq([1],1) * 60/80,
+		\legato,1,
+		\modFreq,Pwhite(200, 3000),
+		\amp,0.2,
+		\out, OJKOS.fxOutBus,
+	),
+
+	'ifGHenriette' -> Pbind(
+		\type, \set,
+		\id, Pfunc({ Ndef(\ringerHenriette).nodeID }),
+		\args,#[\modFreq,\amp],
+		\dur,60/80,
+		\legato,1,
+		\modFreq,Pwhite(200, 3000),
+		\amp,Pseq([0,1],1) * 0.2,
+		\out, OJKOS.fxOutBus,
+	),
+
+
 
 	/*=============   else   ==============*/
 
 	/*=============   outro   ==============*/
 
+	'outro' -> Pbind(
+		\instrument,\outro,
+		\dur,Pwhite(0.1,2),
+		\degree,Prand ((0..7),inf) * Prand([0.5,1],inf),
+		\atk,0.01,
+		\rls,Pwhite(0.4,0.8),
+		\gain,1,
+		\amp,0.1,
+		\pan,Pwhite(-0.8,0.8)
+	),
 ]

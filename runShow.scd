@@ -60,14 +60,8 @@ server.options.device = "Dante Virtual Soundcard";
 OJKOS(inputs,clickOuts,synthOuts,processOuts,lemurAddr);
 )
 
+OJKOS.patterns
 
-(
-var server = Server.default;
-server.options.numInputBusChannels = 32;
-server.options.numOutputBusChannels = 32;
-server.options.device = "Dante Virtual Soundcard";
-
-)
 
 Safety.enable
 Safety.disable

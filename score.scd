@@ -1,4 +1,4 @@
-=//////////// == CONTROL STRUCTURES: SCORE == ////////////
+//////////// == CONTROL STRUCTURES: SCORE == ////////////
 
 var cueKeys = ['introLoop','tuneLoop','ifStart','ifStartRM'];
 var outs = OJKOS.clickOutBus;
@@ -481,17 +481,17 @@ var pats = OJKOS.patterns;
 				Click(120,1,3,6),Click(150,1,2,2),Click(210,1,2),Click(150,1,2),Click(120,1,3,12),Click(70,1,3)
 			).out_([ outs['henriette'],outs['knut'],outs['mike'] ])
 		]],
-		pats: [],
+		pats: [ pats['ifEKnut'], pats['ifEHenriette'] ],
 	),(
 		name: 'ifF',
 		countIn: [[ Click(100,1,3,4).out_([ outs['henriette'],outs['knut'],outs['mike'] ]) ]],
 		click: [[ ClickConCat(1,Click(100,1,3,2),Click(120,1,3,12),Click(100,1,3),ClickCue(100,1,3,4)).out_([ outs['henriette'],outs['knut'],outs['mike'] ]) ]],
-		pats: [],
+		pats: [ pats['ifFKnut'], pats['ifFHenriette'] ],
 	),(
 		name: 'ifG',
 		countIn: [[ Click(80,1,3,4).out_([ outs['henriette'],outs['knut'],outs['mike'] ]) ]],
 		click: [[ ClickConCat(1,Click(80,1,3,3),Click(75,2,4,5),Click(75)).out_([ outs['henriette'],outs['knut'],outs['mike'] ]) ]],
-		pats: [],
+		pats: [ pats['ifGKnut'], pats['ifGHenriette'] ],
 	),
 
 	/*=============   else   ==============*/

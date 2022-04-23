@@ -62,7 +62,51 @@
 
 	/*=============   pop   ==============*/
 
+	/*
+	Ndef(\test,{
+		var sig = SoundIn.ar(OJKOS.inBus['henriette']);
+		sig = (sig * \gain.kr(1)).clip2;
+		// sig = (sig * \gain.kr(1)).tanh;
+		sig = Compander.ar(sig,sig,0.5,1.0,0.01,0.1,4);
+
+		Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5))
+	}).play(out:OJKOS.fxOutBus);
+
+	*/
+
 	/*=============   if   ===============*/
+
+	/*
+
+	these need one fader that can .set \modFreq and also maybe volume control? And .filter some delay or some shit on this as well maybe...
+	(
+
+	Ndef(\ringerKnut,{
+	var sig = SoundIn.ar(\inBus.kr(0));
+	var mod = SinOsc.ar(\modFreq.kr(100));
+
+	sig = Compander.ar(sig,sig,0.1,5,1); // gate ... add threshold
+
+	sig = sig * mod;
+	sig = LeakDC.ar(sig);
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5,0.01));
+
+	}).play;
+
+	Ndef(\ringerHenriette,{
+	var sig = SoundIn.ar(\inBus.kr(0));
+	var mod = SinOsc.ar(\modFreq.kr(100));
+
+	sig = Compander.ar(sig,sig,0.1,5,1); // gate ... add threshold
+
+	sig = sig * mod;
+	sig = LeakDC.ar(sig);
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5,0.01));
+
+	}).play;
+
+	)
+	*/
 
 	/*=============   else   ==============*/
 

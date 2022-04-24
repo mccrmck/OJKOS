@@ -4,8 +4,9 @@ OJKOS {
 
 	classvar <inBus, <clickOutBus, <synthOutBus, <fxOutBus, <lemurAddr;
 	classvar <patterns, <score, <pbTracks;
+	classvar <>tune = true;
 	classvar <tranceBuf, <elseBufs, <recBufs;
-	classvar elseIndex;
+	classvar elseIndex = 0;
 
 	*initClass {
 		pbTracks = IdentityDictionary();
@@ -26,29 +27,29 @@ OJKOS {
 			synthOutBus = synthOut_;
 			fxOutBus = fxOut_;
 			lemurAddr = guiAddr_;
-			elseIndex = 0;
 
-			// load synthDefs
-			File.readAllString(path ++ "synthDefs.scd").interpret;
+			tranceBuf = Buffer.alloc(server,server.sampleRate * (60/142 * 4 * 8) );
+			elseBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8,2)});  // shouold these be timed differently to match what they record?
+			// recBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8)});  // do I need these??? Stereo, or just for individual instruments?
 
 			server.sync;
 
-			// load Patterns
-			patterns = File.readAllString(path ++ "patterns.scd").interpret;
+			// load synthDefs
+			File.readAllString(path ++ "synthDefs.scd").interpret;
 			server.sync;
 
 			// load buffers
 			PathName(path ++ "audio").entries.collect({ |entry|
 
 				if(entry.isFolder,{
-					var key = entry.folderName.asSymbol;
+					var folderKey = entry.folderName.asSymbol;
 					var folder = IdentityDictionary();
 					entry.entries.do({ |folderEntry|
 						var fileKey = folderEntry.fileNameWithoutExtension.asSymbol;
 						var file = Buffer.read(server,folderEntry.fullPath);
 						folder.put(fileKey,file)
 					});
-					pbTracks.put(key,folder);
+					pbTracks.put(folderKey,folder);
 
 				},{
 					var key = entry.fileNameWithoutExtension.asSymbol;
@@ -58,15 +59,15 @@ OJKOS {
 				});
 			});
 
-			// load score
-			score = File.readAllString(path ++ "score.scd").interpret;
-
 			server.sync;
 
-			tranceBuf = Buffer.alloc(server,server.sampleRate * 15 * 60/142);
-			elseBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8,3)}); // shouold these be timed differently to match what they record?
-			// recBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8)});
+			// load Patterns
+			patterns = File.readAllString(path ++ "patterns.scd").interpret;
+			server.sync;
 
+
+			// load score
+			score = File.readAllString(path ++ "score.scd").interpret;
 			server.sync;
 
 			// oscDefs for Lemur
@@ -84,7 +85,7 @@ OJKOS {
 
 	*nextElseBuf {
 		var buf = elseBufs[elseIndex];
-		elseIndex = elseIndex + 1;
+		elseIndex = (elseIndex + 1) % elseBufs.size;
 		^buf
 	}
 

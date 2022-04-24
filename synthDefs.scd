@@ -23,6 +23,13 @@ SynthDef(\recorderTrance,{
 	RecordBuf.ar(sig,\bufnum.kr(),loop:0,doneAction: 2)
 }).add;
 
+SynthDef(\monoPlayback,{
+	var bufnum = \bufnum.kr();
+	var sig = PlayBuf.ar(1,bufnum,BufRateScale.kr(bufnum),doneAction: 2);
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
+	OffsetOut.ar(\out.kr(0),sig);
+}).add;
+
 SynthDef(\stereoPlayback,{
 	var bufnum = \bufnum.kr();
 	var sig = PlayBuf.ar(2,bufnum,BufRateScale.kr(bufnum),doneAction: 2);
@@ -118,19 +125,6 @@ SynthDef(\resNoiseASR,{
 	Out.ar(\out.kr(0),sig);
 }).add;
 
-SynthDef(\resNoisePerc,{                                       // is this used??
-	var sig = PinkNoise.ar(\pNoiz.kr(0.01));
-	sig = HPF.ar(sig,100);
-	sig = LPF.ar(sig,3000);
-
-	sig = Ringz.ar(sig,\freq.kr(440),\dcy.kr(0.5)) + SinOsc.ar(\sineFreq.kr(440),mul: \sineMix.kr(0.1));
-	sig = (sig * \gain.kr(1)).tanh;
-
-	sig = sig * Env.perc(\atk.kr(0.01),\rls.kr(0.1),1,\curve.kr(-4)).kr(2);
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
-	Out.ar(\out.kr(0),sig);
-}).add;
-
 SynthDef(\klik,{
 	var sig = PinkNoise.ar(1!2).sum;
 	sig = BPF.ar(sig,\fFreq.kr(5000),\rq.kr(0.1),\gain.kr(20));
@@ -138,6 +132,33 @@ SynthDef(\klik,{
 	sig = sig * Env.perc(\atk.kr(0.01),\rls.kr(0.1),1,\curve.kr(-4)).kr(2);
 	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
 	OffsetOut.ar(\out.kr(0),sig);
+}).add;
+
+SynthDef(\freeze,{
+	var sig = SoundIn.ar(\inBus.kr(0));
+	var frames = \frames.kr(4096);
+	sig = HPF.ar(sig,400);
+	sig = FFT(LocalBuf(frames),sig);
+	sig = PV_Freeze(sig,1);
+	sig = IFFT(sig);
+	sig = (sig * \gain.kr(1)).clip2;
+	sig = sig * Env.asr(\atk.kr(0.01),1,\rls.kr(0.01),\curve.kr(-4)).kr(2,\gate.kr(1));
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.2));
+	Out.ar(\out.kr(0),sig)
+}).add;
+
+SynthDef(\freezeComb,{
+	var sig = SoundIn.ar(\inBus.kr(0));
+	var frames = \frames.kr(4096);
+	sig = HPF.ar(sig,300);
+	sig = FFT(LocalBuf(frames),sig);
+	sig = PV_Freeze(sig,1);
+	sig = PV_RectComb(sig,32,1,\width.kr(0.1));
+	sig = IFFT(sig);
+	sig = (sig * \gain.kr(1)).clip2;
+	sig = sig * Env.asr(\atk.kr(0.01),1,\rls.kr(0.01),\curve.kr(-4)).kr(2,\gate.kr(1));
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.2));
+	Out.ar(\out.kr(0),sig)
 }).add;
 
 SynthDef(\noiseFilt,{
@@ -166,6 +187,20 @@ SynthDef(\lfNoise,{
 // JI chords
 // bass sound
 // impact?
+
+SynthDef(\tryBass,{
+	var sig = VarSaw.ar(\freq.kr(110) * [1,1.5],width: \width.kr(0.5),mul: [1,0.5]);
+	var atk = \atk.kr(0.01);
+	var rls = \rls.kr(0.6);
+	sig = sig + BrownNoise.ar(0.01);
+	sig = (sig.sum * \gain.kr(1)).tanh;
+	sig = RLPF.ar(sig,XLine.kr(\freq.kr(110),\fFreq.kr(440),(atk + rls)/2),\rq.kr(1));
+	sig = HPF.ar(sig,200);
+	sig = sig * Env.asr(atk,1,rls,\curve.kr(-4)).kr(2,\gate.kr(1));
+	sig = LeakDC.ar(sig);
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5));
+	Out.ar(\out.kr(0),sig);
+}).add;
 
 // processing for knut?
 

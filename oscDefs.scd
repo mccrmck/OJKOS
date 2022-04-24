@@ -16,11 +16,10 @@
 	// maybe this should be a hybrid approach, with patterns (\type, \set) controlling pitch, width, etc. and busses controlling the stuff I want to play...
 	// or I could add some LFOs??
 
-	/*
 
-	OSCdef(\emptySet,{  |msg, time,addr, recvPort|
 
-	Ndef(\emptySet,{
+	// OSCdef(\emptySet,{  |msg, time,addr, recvPort|
+	/*Ndef(\emptySet,{
 	var varT = \lagTime.kr(0);
 	var varC = \lagCurve.kr(0);
 	var sig, freq = \freq.kr(28.midicps).varlag(varT,varC);
@@ -42,19 +41,28 @@
 	sig = sig.tanh;
 	sig = Compander.ar(sig,In.ar(\sChain.kr(),1),\thresh.kr(0.5),1,\ratio.kr().reciprocal,\cAtk.kr(0.01),\cRls.kr(0.1)); // must test this!!
 	sig = Balance2.ar(sig[0],sig[1],\pan.kr(0),\amp.kr(0.5));
-	}).play;
-	});
+	}).play;*/
+	// });
 
-	Ndef(\emptySet).set(\lagTime,8,\lagCurve,4)
-	Ndef(\emptySet).set(\freq,28.midicps,\lpFreq,800,\lpQ,0.01,\hpFreq,40,\hpQ,1,\midGain,4,\sideGain,0.5,\offset,0.4,\gain,2,\width,0.5,\amp,0.2)
-	Ndef(\emptySet).clear
+	// Ndef(\emptySet).set(\lagTime,2,\lagCurve,4)
+	// Ndef(\emptySet).set(\freq,28.midicps,\lpFreq,2000,\lpQ,0.5,\hpFreq,40,\hpQ,1,\midGain,0.02,\sideGain,4,\offset,0.9,\gain,8,\width,0.02,\amp,0.5)
+	// Ndef(\emptySet).clear
 
-	*/
+
 
 
 	/*=============   break   ==============*/
 
 	/*=============   case   ==============*/
+
+
+	/*
+
+	(  // for before letter A
+	var freq = 400.exprand(800);
+	Synth(\pluck,[\freq,freq,\dcy,4.neg,\coef,0.75.rrand(0.92),\fFreq,freq * 4,\fGain,1,\gain,8,\amp,0.05.rrand(0.2),\pan,0.5.rand2,\out,OJKOS.synthOutBus])
+	)
+	*/
 
 	/*=============   try   ==============*/
 
@@ -64,22 +72,33 @@
 
 	/*
 	Ndef(\test,{
-		var sig = SoundIn.ar(OJKOS.inBus['henriette']);
-		sig = (sig * \gain.kr(1)).clip2;
-		// sig = (sig * \gain.kr(1)).tanh;
-		sig = Compander.ar(sig,sig,0.5,1.0,0.01,0.1,4);
+	var sig = SoundIn.ar(OJKOS.inBus['henriette']);
+	sig = (sig * \gain.kr(1)).clip2;
+	// sig = (sig * \gain.kr(1)).tanh;
+	sig = Compander.ar(sig,sig,0.5,1.0,0.01,0.1,4);
 
-		Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5))
+	Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5))
 	}).play(out:OJKOS.fxOutBus);
 
+
+
+	Ndef(\popNoise,{
+	var sig = BrownNoise.ar(1);
+	sig = BPF.ar(sig,\fFreq.kr(440),\rq.kr(1));
+	sig = (sig *\gain.kr(10)).clip2;
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.3));
+	}).set(\amp,0).play
+
+
+	Ndef(\popNoise).set(\gain,200,\fFreq,500,\rq,0.8,\amp,0.1)
 	*/
 
 	/*=============   if   ===============*/
 
-	/*
 
-	these need one fader that can .set \modFreq and also maybe volume control? And .filter some delay or some shit on this as well maybe...
-	(
+
+	// these need one fader that can .set \modFreq and also maybe volume control? And .filter some delay or some shit on this as well maybe...
+	/*(
 
 	Ndef(\ringerKnut,{
 	var sig = SoundIn.ar(\inBus.kr(0));
@@ -89,7 +108,7 @@
 
 	sig = sig * mod;
 	sig = LeakDC.ar(sig);
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5,0.01));
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0,0.01));
 
 	}).play;
 
@@ -101,12 +120,12 @@
 
 	sig = sig * mod;
 	sig = LeakDC.ar(sig);
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5,0.01));
+	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0,0.01));
 
 	}).play;
 
-	)
-	*/
+	)*/
+
 
 	/*=============   else   ==============*/
 

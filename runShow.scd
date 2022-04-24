@@ -44,7 +44,7 @@ var clickOuts = Dictionary[
 	'alexander'  -> 6,
 	'oskar'      -> 4,
 
-	'mike'       -> 19,
+	'mike'       -> =19,
 	'all'        -> (4..19),
 ];
 
@@ -62,12 +62,11 @@ OJKOS(inputs,clickOuts,synthOuts,processOuts,lemurAddr);
 
 OJKOS.patterns
 
-
 Safety.enable
 Safety.disable
 
-// must find a better solution for booleans
-~tune = true
+OJKOS.patterns['tranceGate'].play
+
 
 
 OJKOS.sections[15]
@@ -75,7 +74,7 @@ p = Ppar([OJKOS.score[15]['pats'][1]])
 p.play
 
 
-SoundCheck(32).sweep(0.2)
-SoundCheck(32,[4,6,5,18,19,7,8,9,10,11,12,17,16,15,14,13]).sweep(0.01)
+SoundCheck(32).static(13)
+SoundCheck(32,[4,6,5,18,19,7,8,9,10,11,12,17,16,15,14,13]).sweep(8)
 SoundCheck(32).clear
 

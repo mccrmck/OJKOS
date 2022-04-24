@@ -48,8 +48,3 @@ Ndef(\foley).set(\rmFreq,50)
 
 // filter maker? How can I switch things very quickly but keep track of index number
 
-~this = { |index, function|
-
-	Ndef(\foley)[index] = \filter -> function
-}
-

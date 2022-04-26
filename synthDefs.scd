@@ -56,7 +56,7 @@ SynthDef(\grainPerc,{
 	var bufnum = \bufnum.kr();
 	var sig = PlayBuf.ar(1,bufnum,BufRateScale.kr(bufnum) * \rate.kr(1),1,\pos.kr(0) * BufFrames.kr(bufnum), \loop.kr(0));
 	sig = (sig * \gain.kr(1)).clip2;
-	sig = sig * Env.perc(\atk.kr(0.01),\rls.kr(0.1),1,\curve.kr(-4)).kr(2,\gate.kr(1));
+	sig = sig * Env.perc(\atk.kr(0.01),\rls.kr(0.1),1,\curve.kr(-4)).kr(2);
 	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
 	OffsetOut.ar(\out.kr(0),sig)
 }).add;
@@ -114,8 +114,8 @@ SynthDef(\glitchSine,{
 
 SynthDef(\resNoiseASR,{
 	var sig = PinkNoise.ar(\pNoiz.kr(0.01));
-	sig = HPF.ar(sig,100);
-	sig = LPF.ar(sig,3000);
+	sig = HPF.ar(sig,\hpFreq.kr(100));
+	sig = LPF.ar(sig,\lpFreq.kr(3000));
 
 	sig = Ringz.ar(sig,\freq.kr(440),\dcy.kr(0.5)) + SinOsc.ar(\sineFreq.kr(440),mul: \sineMix.kr(0.1));
 	sig = (sig * \gain.kr(1)).tanh;
@@ -184,21 +184,34 @@ SynthDef(\lfNoise,{
 
 /*=============   try   ==============*/
 
-// JI chords
-// bass sound
-// impact?
-
 SynthDef(\tryBass,{
-	var sig = VarSaw.ar(\freq.kr(110) * [1,1.5],width: \width.kr(0.5),mul: [1,0.5]);
-	var atk = \atk.kr(0.01);
-	var rls = \rls.kr(0.6);
-	sig = sig + BrownNoise.ar(0.01);
-	sig = (sig.sum * \gain.kr(1)).tanh;
-	sig = RLPF.ar(sig,XLine.kr(\freq.kr(110),\fFreq.kr(440),(atk + rls)/2),\rq.kr(1));
-	sig = HPF.ar(sig,200);
-	sig = sig * Env.asr(atk,1,rls,\curve.kr(-4)).kr(2,\gate.kr(1));
-	sig = LeakDC.ar(sig);
+	var freq = \freq.kr(110);
+	var sig = SinOsc.ar(freq * [1,1.5,2],mul: [1,0.5,0.5]);
+	sig = sig.sum.tanh;
+	sig = HPF.ar(sig,freq);
+	sig = Compander.ar(sig,sig,0.5,1,1/4,0.01,1.0,4);
+	sig = sig + HPF.ar(WhiteNoise.ar(0.8),freq / 4);
+	sig = RLPF.ar(sig,\fFreq.kr(500) * LFNoise1.ar(0.5).range(0.9,1.1),\rq.kr(1));
+	sig = (sig * \gain.kr(1)).tanh;
+	sig = Compander.ar(sig,sig,0.5,1,1/3,0.01,1.0,3);
+
+	sig = sig * Env.perc(\atk.kr(0.01),1,\rls.kr(0.6),\curve.kr(-4)).kr(2);
 	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5));
+	Out.ar(\out.kr(0),sig);
+}).add;
+
+SynthDef(\tryResNoise,{
+	var varT = \lagTime.kr(2);
+	var varC = \lagCurve.kr(4);
+	var sig = PinkNoise.ar(\pNoiz.kr(0.01));
+	sig = HPF.ar(sig,\hpFreq.kr(250));
+	sig = LPF.ar(sig,\lpFreq.kr(4000));
+
+	sig = Ringz.ar(sig,\freq.kr(440).varlag(varT,varC),\dcy.kr(0.5)) + SinOsc.ar(\sineFreq.kr(440).varlag(varT,varC),mul: \sineMix.kr(0.1));
+	sig = (sig * \gain.kr(1)).tanh;
+	sig = Compander.ar(sig,sig,0.5,1,1/3,0.01,0.1,3);
+	sig = sig * Env.asr(\atk.kr(0.01),1,\rls.kr(0.1),\curve.kr(-4)).kr(2,\gate.kr(1));
+	sig = Pan2.ar(sig,\pan.kr(0).varlag(varT,varC),\amp.kr(1));
 	Out.ar(\out.kr(0),sig);
 }).add;
 
@@ -251,5 +264,3 @@ SynthDef(\outro,{
 	Out.ar(\out.kr(0),sig);
 }).add;
 )
-
-// add sends!!

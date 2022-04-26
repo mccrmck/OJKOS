@@ -44,7 +44,7 @@ var clickOuts = Dictionary[
 	'alexander'  -> 6,
 	'oskar'      -> 4,
 
-	'mike'       -> =19,
+	'mike'       -> 19,
 	'all'        -> (4..19),
 ];
 
@@ -66,7 +66,6 @@ Safety.enable
 Safety.disable
 
 OJKOS.patterns['tranceGate'].play
-
 
 
 OJKOS.sections[15]

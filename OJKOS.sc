@@ -4,9 +4,10 @@ OJKOS {
 
 	classvar <inBus, <clickOutBus, <synthOutBus, <fxOutBus, <lemurAddr;
 	classvar <patterns, <score, <pbTracks;
-	classvar <>tune = true;
+	classvar <>tune = true, <>outro = true, <>kickLoop = true;
+	clasvar <>breakBus;
 	classvar <tranceBuf, <elseBufs, <recBufs;
-	classvar elseIndex = 0;
+	classvar <elseIndex = 0;
 
 	*initClass {
 		pbTracks = IdentityDictionary();
@@ -30,7 +31,7 @@ OJKOS {
 
 			tranceBuf = Buffer.alloc(server,server.sampleRate * (60/142 * 4 * 8) );
 			elseBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8,2)});  // shouold these be timed differently to match what they record?
-			// recBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8)});  // do I need these??? Stereo, or just for individual instruments?
+			breakBus = Bus.control(server,3);
 
 			server.sync;
 
@@ -71,7 +72,22 @@ OJKOS {
 			server.sync;
 
 			// oscDefs for Lemur
-			File.readAllString(path ++ "oscDefs.scd").interpret.value(lemurAddr);
+
+
+
+
+
+
+
+			// File.readAllString(path ++ "oscDefs.scd").interpret.value(lemurAddr);
+
+
+
+
+
+
+
+
 		});
 	}
 

@@ -30,14 +30,23 @@ var chords = Dictionary[
 	\eSus  -> [[52,59,61,66]],
 ];
 
+var tryChords = Dictionary[
+
+	'a'  -> [61,66.3,71,74.5],
+	'bb' -> [63.5,67.3,72,74],
+	'b'  -> [63,68.3,73,76.5],
+	'c'  -> [64,69.3,74,77.5],
+	'db' -> [63,66.5,70.3,77],
+	'd'  -> [59.3,67.5,73,76],
+	'eb' -> [60.3,67,68.5,77],
+	'f'  -> [60,67,70.5,74.3],
+	'gb' -> [61,68,71.5,75.3],
+];
+
+var bandBufArray = OJKOS.pbTracks['band'].asSortedArray.collect({|buf| buf[1]});
+
 IdentityDictionary[
 
-	'recBand' -> Pbind(
-		\instrument,\recorderStereo,
-		\dur,Pseq([0],1),
-		\inBus,[[ ins['mains'], ins['mains'] + 1 ]],
-		\bufnum,Pfunc({ OJKOS.nextElseBuf }),
-	),
 
 	/*=============   intro   ==============*/
 
@@ -55,29 +64,33 @@ IdentityDictionary[
 				\amp,Pseq([[0.2,0.2,0.1,0.1]],inf) * 0.1,
 				\out,OJKOS.synthOutBus
 			)
+		),
+		Pbind(
+			\instrument,\tune,
+			\dur,Pseq([Pwhite(3,4.0,3),Pwhite(4,6,1)],inf),
+			\freq,Pseq([[0.25,0.5,1,2]] * [2,3,3,2]) * 46.midicps,
+			\gain,Pwhite(1.0,1.2),
+			\atk,Pwhite(4.0,6.0),
+			\rls,Pwhite(6.0,7.0),
+			\pan,Pfunc({ var rand = 0.4.rand2;  [0,0,rand,rand.neg] }),
+			\amp,Pseq([[0.2,0.2,0.1,0.1]],inf) * 0.1,
+			\out,OJKOS.synthOutBus
+		).finDur(60/50 * 3)
+	]),
+
+	'recBandIntro' -> Pseq([
+		ClickRest(50,4,2).pattern,
+		Pbind(
+			\instrument,\recorderStereo,
+			\dur,Pseq([0],1),
+			\inBus,[[ ins['mains'], ins['mains'] + 1 ]],
+			\bufnum,Pfunc({ OJKOS.nextElseBuf }),
 		)
 	]),
 
 	/*=============   break   ==============*/
 
-	/* this will later become the part before 'breakStart'
-	'introBreak' -> Pbind(
-	\instrument,\grainPerc,
-	\dur,Pseq([0.5,0.5],inf) * 60/133.125,
-	\type,\note,
-	\bufnum,OJKOS.pbTracks['break'],
-	\rate,1,
-	\pos,Pseq([0.25,0.4,0.5],inf), // descending fminor triad
-	// \gain,Pseg([1,40],[40],\exp,inf),
-	\gain,80,                                      // map this to a bus and wrap in a Pwhile to play live - go from kermit the frog to formant synth to drive!!
-	\atk,0.01,
-	\rls,0.2,
-	\curve,5.neg,
-	\pan,0,
-	\amp,0.1,
-	\out,OJKOS.synthOutBus
-	),
-	*/
+
 
 	'breakStartFred' -> Pbind(
 		\instrument,\grainPerc,
@@ -105,6 +118,22 @@ IdentityDictionary[
 		\out,OJKOS.synthOutBus
 	),
 
+	'kickLoop' -> Pwhile({ OJKOS.kickLoop },
+		Pbind(
+			\instrument,\bdSynth,
+			\dur,Pseq([1],4) * 60/133.125,
+			\freq,29.midicps, //24 == C, 29 == F
+			\sweep,0.06,
+			\rq,0.05,
+			\gain,4,
+			\atk,0.001,
+			\rls,0.08,
+			\curve,14,
+			\amp,0.1,
+			\out,OJKOS.synthOutBus
+		)
+	),
+
 	'tranceKickSlo' -> Pbind(
 		\instrument,\bdSynth,
 		\dur,60/133.125,
@@ -116,6 +145,20 @@ IdentityDictionary[
 		\rls,0.08,
 		\curve,14,
 		\amp,0.1,
+		\out,OJKOS.synthOutBus
+	),
+
+	'breakRiserB' -> Pmono(\resNoiseASR,
+		\dur,0.02,
+		\freq,65.midicps /2,
+		\gain,Pseg([1,8],[48] * 60/142),
+		\sineFreq,65.midicps * [0.5,1,1],
+		\sineMix,0.2,
+		\atk,4 * 12 * 60/142,
+		\rls,0.001,
+		\curve,5,
+		\pan,[0,-0.5,0.5],
+		\amp,0.04,
 		\out,OJKOS.synthOutBus
 	),
 
@@ -151,6 +194,81 @@ IdentityDictionary[
 		\out,OJKOS.synthOutBus
 	),
 
+	'breakRiserD' -> Pseq([
+		ClickRest(142,4,16).pattern,
+		Pmono(\resNoiseASR,
+			\dur,0.02,
+			\freq,65.midicps * [1,2,2],
+			\gain,Pseg([1,5],[32] * 60/142),
+			\sineFreq,65.midicps * [0.5,1,1],
+			\sineMix,0.2,
+			\atk,4 * 8 * 60/142,
+			\rls,0.001,
+			\curve,5,
+			\pan,[0,-0.5,0.5],
+			\amp,0.04,
+			\out,OJKOS.synthOutBus
+		)
+	]),
+
+	'breakRiserE' -> Pseq([
+		ClickRest(142,4,16).pattern,
+		Pmono(\resNoiseASR,
+			\dur,0.02,
+			\freq,65.midicps * [2,4],
+			\gain,Pseg([1,5],[32] * 60/142),
+			\sineFreq,65.midicps * [1,1],
+			\sineMix,0.2,
+			\atk,4 * 8 * 60/142,
+			\rls,0.001,
+			\curve,5,
+			\pan,[0,-0.5,0.5],
+			\amp,0.04,
+			\out,OJKOS.synthOutBus
+		)
+	]),
+
+	'recBandBreak' -> Pseq([
+		ClickRest(142,4,3).pattern,
+		Pbind(
+			\instrument,\recorderStereo,
+			\dur,Pseq([0],1),
+			\inBus,[[ ins['mains'], ins['mains'] + 1 ]],
+			\bufnum,Pfunc({ OJKOS.nextElseBuf }),
+		)
+	]),
+
+	'breakRiserI' -> Pseq([
+		ClickRest(142,4,12).pattern,
+		Pmono(\resNoiseASR,
+			\dur,0.02,
+			\freq,65.midicps * [2,4],
+			\gain,Pseg([1,10],[16] * 60/142),
+			\sineFreq,65.midicps * [1,2],
+			\sineMix,0.2,
+			\atk,4 * 4 * 60/142,
+			\rls,0.001,
+			\curve,5,
+			\pan,[0,-0.5,0.5],
+			\amp,0.02,
+			\out,OJKOS.synthOutBus
+		)
+	]),
+
+	'tranceGateEnd' -> Pseq([
+		ClickRest(142,4,16).pattern,
+		Pmono(\tranceGate,
+			\dur,Prand([0.5,Pseq([0.25],2)],inf) * 60/142,
+			\bufnum,OJKOS.tranceBuf,
+			\gCurve,5.neg,
+			\gAtk,0.249 * 60/142,
+			\gRls,0.001 * 60/142,
+			\trig,1,
+			\amp,Pseg([1,0.001],[4 * 8] * 60/142,\exp) * 0.05,
+			\out,OJKOS.synthOutBus
+		)
+	]),
+
 	/*=============   case   ==============*/
 
 	'pluckA' -> Pbind(
@@ -167,6 +285,16 @@ IdentityDictionary[
 		\pan,Pwhite(-0.5,0.5),
 		\out,OJKOS.synthOutBus
 	).finDur(60/96 * 4 * 8),
+
+	'recBandCase' -> Pseq([
+		ClickRest(96,4,8).pattern,
+		Pbind(
+			\instrument,\recorderStereo,
+			\dur,Pseq([0],1),
+			\inBus,[[ ins['mains'], ins['mains'] + 1 ]],
+			\bufnum,Pfunc({ OJKOS.nextElseBuf }),
+		)
+	]),
 
 	'pluckB' -> Pseq([
 		Pbind(
@@ -258,6 +386,7 @@ IdentityDictionary[
 			\curve,4,
 			\pan,[-0.5,0.5],
 			\amp,0.008,
+			\out,OJKOS.synthOutBus
 		).finDur(60/96 * 4 * 19)
 	]),
 
@@ -492,6 +621,7 @@ IdentityDictionary[
 			\curve,10,
 			\gain,4,
 			\amp,Pseq([[1,0.05]],inf) * 0.1,
+			\out,OJKOS.synthOutBus
 		),
 		ClickRest(130,13.5).pattern,
 		Pbind(
@@ -504,6 +634,7 @@ IdentityDictionary[
 			\curve,10,
 			\gain,2.5,
 			\amp,Pseq([[1,0.05]],inf) * 0.1,
+			\out,OJKOS.synthOutBus
 		),
 		ClickRest(130,12).pattern,
 		Pbind(
@@ -516,6 +647,7 @@ IdentityDictionary[
 			\curve,10,
 			\gain,4,
 			\amp,Pseq([[0.8,0.05]],inf) * 0.1,
+			\out,OJKOS.synthOutBus
 		),
 		ClickRest(130,14).pattern,
 		Pbind(
@@ -527,6 +659,7 @@ IdentityDictionary[
 			\curve,10,
 			\gain,4,
 			\amp,Pseq([[1,0.05]],inf) * 0.1,
+			\out,OJKOS.synthOutBus
 		)
 	]),
 
@@ -569,6 +702,7 @@ IdentityDictionary[
 				\curve,10,
 				\gain,4,
 				\amp,Pseq([[1,0.05]],inf) * 0.1,
+				\out,OJKOS.synthOutBus
 			),
 			ClickRest(130,17.5).pattern
 		],3)
@@ -602,6 +736,22 @@ IdentityDictionary[
 		\pan, Prand([-0.8,-0.4,0.4,0.8],inf),
 		\out,OJKOS.synthOutBus
 	),
+
+	'randFreezeComb' -> Pseq([
+		ClickRest(130,4).pattern,
+		Pmono(
+			\freezeComb,
+			\dur,Pseq([3]) * 60/130,
+			\inBus,Prand([ ins['maria'],ins['camilla'] ]),
+			\width,Pwhite(0.15,0.4),
+			\gain,4,
+			\atk,0.001,
+			\rls,0.001,
+			\pan,Prand([-0.5,0.5]),
+			\amp,1,
+			\out,OJKOS.fxOutBus,
+		)
+	],inf),
 
 	'glitchFills' -> Pseq([
 		ClickRest(130,8).pattern,
@@ -657,68 +807,364 @@ IdentityDictionary[
 
 	/*=============   try   ==============*/
 
-	'tryK' -> Pseq([
+	'tryBassD' -> Pseq([
+		ClickRest(50,3).pattern,
+		Pbind(
+			\instrument,\tryBass,
+			\dur,Pseq([3],2) * 60/50,
+			\freq, [45,52].midicps,
+			\fFreq,Pkey(\freq) * 2,
+			\atk,6 * 60/50,
+			\rls,6 * 60/50,
+			\gain,1,
+			\curve,0,
+			\amp,[1,0.5] * -50.dbamp,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'tryBassE' -> Pseq([
+		ClickRest(50,1).pattern,
+		Pbind(
+			\instrument,\tryBass,
+			\dur,Pseq([3],2) * 60/50,
+			\freq, [45,52].midicps,
+			\fFreq,Pkey(\freq) * 2,
+			\atk,6 * 60/50,
+			\rls,6 * 60/50,
+			\gain,1,
+			\curve,0,
+			\amp,[1,0.5] * -50.dbamp,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'tryBassF' -> Pseq([
+		ClickRest(50,1).pattern,
+		Pbind(
+			\instrument,\tryBass,
+			\dur,Pseq([3],2) * 60/50,
+			\freq, [41,48].midicps,
+			\fFreq,Pkey(\freq) * 2,
+			\atk,6 * 60/50,
+			\rls,6 * 60/50,
+			\gain,1,
+			\curve,0,
+			\amp,[1,0.5] * -50.dbamp,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'tryPadsF' -> Pseq([
+		ClickRest(50,2).pattern,
+		Pmono(
+			\tryResNoise,
+			\dur,Pseq([5],inf) * 60/50,
+			\freq, Pdict(tryChords,Pseq(['f'])).midicps,
+			\gain,2,
+			\sineFreq,Pkey(\freq),
+			\pNoiz,0.01,
+			\sineMix,[0.2,0.2,0.15,0.15] * 0.5,
+			\atk, {2.5.rrand(4)}!4 * 60/50,
+			\rls, {4.rrand(8)}!4 * 60/50,
+			\curve,4,
+			\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
+			\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
+			\amp,0.02,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'tryBassG' -> Pseq([
+		ClickRest(50,1).pattern,
+		Pbind(
+			\instrument,\tryBass,
+			\dur,Pseq([3],2) * 60/50,
+			\freq, [37,44].midicps,
+			\fFreq,Pkey(\freq) * 2,
+			\atk,6 * 60/50,
+			\rls,6 * 60/50,
+			\gain,1,
+			\curve,0,
+			\amp,[1,0.5] * -50.dbamp,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'tryPadsG' -> Pseq([
+		ClickRest(50,2).pattern,
+		Pmono(
+			\tryResNoise,
+			\dur,Pseq([5],inf) * 60/50,
+			\freq, Pdict(tryChords,Pseq(['db'])).midicps,
+			\gain,2,
+			\sineFreq,Pkey(\freq),
+			\pNoiz,0.01,
+			\sineMix,[0.2,0.2,0.15,0.15] * 0.5,
+			\atk, {2.5.rrand(4)}!4 * 60/50,
+			\rls, {4.rrand(8)}!4 * 60/50,
+			\curve,4,
+			\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
+			\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
+			\amp,0.02,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'tryBassH' -> Pseq([
+		ClickRest(50,1).pattern,
+		Pbind(
+			\instrument,\tryBass,
+			\dur,Pseq([3],2) * 60/50,
+			\freq, [36,43].midicps,
+			\fFreq,Pkey(\freq) * 2,
+			\atk,6 * 60/50,
+			\rls,6 * 60/50,
+			\gain,1,
+			\curve,0,
+			\amp,[0.5,1] * -50.dbamp,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'tryPadsH' -> Pseq([
+		ClickRest(50,2).pattern,
+		Pmono(
+			\tryResNoise,
+			\dur,Pseq([5],inf) * 60/50,
+			\freq, Pdict(tryChords,Pseq(['c'])).midicps,
+			\gain,2,
+			\sineFreq,Pkey(\freq),
+			\pNoiz,0.01,
+			\sineMix,[0.2,0.2,0.15,0.15] * 0.5,
+			\atk, {2.5.rrand(4)}!4 * 60/50,
+			\rls, {4.rrand(8)}!4 * 60/50,
+			\curve,4,
+			\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
+			\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
+			\amp,0.02,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'tryBassI' -> Pseq([
+		ClickRest(50,1).pattern,
+		Pbind(
+			\instrument,\tryBass,
+			\dur,Pseq([3],2) * 60/50,
+			\freq, [39,46].midicps,
+			\fFreq,Pkey(\freq) * 2,
+			\atk,6 * 60/50,
+			\rls,6 * 60/50,
+			\gain,1,
+			\curve,0,
+			\amp,[0.5,1] * -50.dbamp,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'tryPadsI' -> Pseq([
+		ClickRest(50,2).pattern,
+		Pmono(
+			\tryResNoise,
+			\dur,Pseq([7],inf) * 60/50,
+			\freq, Pdict(tryChords,Pseq(['eb'])).midicps,
+			\gain,2,
+			\sineFreq,Pkey(\freq),
+			\pNoiz,0.01,
+			\sineMix,[0.2,0.2,0.15,0.15] * 0.5,
+			\atk, {2.5.rrand(4)}!4 * 60/50,
+			\rls, {4.rrand(8)}!4 * 60/50,
+			\curve,4,
+			\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
+			\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
+			\amp,0.02,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'tryBassJ' -> Pseq([
+		ClickRest(50,1).pattern,
+		Pbind(
+			\instrument,\tryBass,
+			\dur,Pseq([3],2) * 60/50,
+			\freq, [42,49].midicps,
+			\fFreq,Pkey(\freq) * 2,
+			\atk,6 * 60/50,
+			\rls,6 * 60/50,
+			\gain,1,
+			\curve,0,
+			\amp,[0.5,1] * -50.dbamp,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'tryPadsJ' -> Pseq([
+		ClickRest(50,2).pattern,
+		Pmono(
+			\tryResNoise,
+			\dur,Pseq([7],inf) * 60/50,
+			\freq, Pdict(tryChords,Pseq(['gb'])).midicps,
+			\gain,2,
+			\sineFreq,Pkey(\freq),
+			\pNoiz,0.01,
+			\sineMix,[0.2,0.2,0.15,0.15] * 0.5,
+			\atk, {2.5.rrand(4)}!4 * 60/50,
+			\rls, {4.rrand(8)}!4 * 60/50,
+			\curve,4,
+			\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
+			\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
+			\amp,0.02,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'tryBassK' -> Pseq([
 		ClickRest(80,4,2).pattern,
 		Pbind(
 			\instrument,\tryBass,
 			\dur,Pseq([6.69,5.9,5.2,5.65],inf),
 			\freq, Pseq([45,41,37,45]).midicps,
-			\fFreq, Pkey(\freq) * 16,
-			\width,0.5,
-			\rq,0.6,
-			\gain,8,
-			\atk,0.05,
-			\rls,Pkey(\dur) - Pkey(\atk) * 0.75,
-			\curve,4.neg,
-			\amp,0.1,
+			\fFreq,Pkey(\freq) * 3,
+			\atk,[0.01,1],
+			\rls,[1,8],
+			\gain,[3,1],
+			\amp,-43.dbamp,
 			\out,OJKOS.synthOutBus,
 		)
 	]),
 
-	'tryL' -> Pbind(
+	'tryPadsK' -> Pseq([
+		ClickRest(80,4,2).pattern,
+		Pmono(
+			\tryResNoise,
+			\dur,Pseq([6.69,5.9,5.2,5.65],inf),
+			\freq, Pdict(tryChords,Pseq(['a','f','db','a'])).midicps,
+			\gain,2,
+			\sineFreq,Pkey(\freq),
+			\pNoiz,0.008,
+			\sineMix,[0.2,0.2,0.15,0.15],
+			\atk,0.8,
+			\rls,2,
+			\curve,4,
+			\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
+			\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
+			\amp,0.02,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
+
+	'recBandTry' -> Pbind(
+		\instrument,\recorderStereo,
+		\dur,Pseq([0],1),
+		\inBus,[[ ins['mains'], ins['mains'] + 1 ]],
+		\bufnum,Pfunc({ OJKOS.nextElseBuf }),
+	),
+
+	'tryBassL' -> Pbind(
 		\instrument,\tryBass,
 		\dur,Pseq([4.86,4.96,5.11,4.85],inf),
-		\freq, Pseq([46,38,45,49]).midicps,  // Db went up an octave
-		\fFreq, Pkey(\freq) * 16,
-		\width,0.5,
-		\rq,0.6,
-		\gain,8,
-		\atk,0.05,
-		\rls,Pkey(\dur) - Pkey(\atk) * 0.75,
-		\curve,4.neg,
-		\amp,0.1,
+		\freq, Pseq([47,38,46,37]).midicps,  // Db went up an octave
+		\fFreq,Pkey(\freq) * 3,
+		\atk,[0.01,1],
+		\rls,[1,8],
+		\gain,[3,1],
+		\amp,-43.dbamp,
 		\out,OJKOS.synthOutBus,
 	),
 
-	'tryM' -> Pbind(
+	'tryPadsL' -> Pmono(
+		\tryResNoise,
+		\dur,Pseq([4.86,4.96,5.11,4.85],inf),
+		\freq, Pdict(tryChords,Pseq(['b','d','bb','db'])).midicps,
+		\gain,2,
+		\sineFreq,Pkey(\freq),
+		\pNoiz,0.008,
+		\sineMix,[0.2,0.2,0.15,0.15],
+		\atk,0.8,
+		\rls,2,
+		\curve,4,
+		\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
+		\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
+		\amp,0.02,
+		\out,OJKOS.synthOutBus,
+	),
+
+	'tryBassM' -> Pbind(
 		\instrument,\tryBass,
 		\dur,Pseq([4.69,5.53,7.27,5.9,5.3,5.65,4.86,4.96,6.44],inf),
-		\freq, Pseq([36,39,42,41,49,45,49,38,46]).midicps,
-		\fFreq, Pkey(\freq) * 16,
-		\width,0.5,
-		\rq,0.6,
-		\gain,8,
-		\atk,0.05,
-		\rls,Pkey(\dur) - Pkey(\atk) * 0.75,
-		\curve,4.neg,
-		\amp,0.1,
+		\freq, Pseq([48,39,42,41,37,45,47,38,46]).midicps,
+		\fFreq,Pkey(\freq) * 3,
+		\atk,[0.01,1],
+		\rls,[1,8],
+		\gain,[3,1],
+		\amp,-43.dbamp,
 		\out,OJKOS.synthOutBus,
 	),
 
-	'tryN' -> Pbind(
-		\instrument,\tryBass,
-		\dur,Pseq([7.5],inf),
-		\freq, Pseq([41],5).midicps,
-		\fFreq, Pkey(\freq) * 16,
-		\width,0.5,
-		\rq,0.6,
-		\gain,8,
-		\atk,0.05,
-		\rls,Pkey(\dur) - Pkey(\atk) * 0.75,
-		\curve,4.neg,
-		\amp,0.1,
+	'tryPadsM' -> Pmono(
+		\tryResNoise,
+		\dur,Pseq([4.69,5.53,7.27,5.9,5.3,5.65,4.86,4.96,6.44],inf),
+		\freq, Pdict(tryChords,Pseq(['c','eb','gb','f','db','a','b','d','bb'])).midicps,
+		\gain,2,
+		\sineFreq,Pkey(\freq),
+		\pNoiz,0.008,
+		\sineMix,[0.2,0.2,0.15,0.15],
+		\atk,0.8,
+		\rls,2,
+		\curve,4,
+		\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
+		\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
+		\amp,0.02,
 		\out,OJKOS.synthOutBus,
 	),
+
+	'tryBassN' -> Pbind(
+		\instrument,\tryBass,
+		\dur,Pseq([7.5],6),
+		\freq, Pseq([41,29],inf).midicps,
+		\fFreq,Pkey(\freq) * 3,
+		\atk,[0.01,1],
+		\rls,[1,12],
+		\gain,[3,1],
+		\amp,-43.dbamp,
+		\out,OJKOS.synthOutBus,
+	),
+
+	'tryPadsN' -> Pseq([
+		Pmono(
+			\tryResNoise,
+			\dur,Prand([1,0.75,0.5],inf) * 60/64,
+			\freq, Pdict(tryChords,'f').midicps,
+			\gain,Pseq(2!15 ++ [Pwrand([2,4],[0.8,0.2],inf)]),
+			\sineFreq,Pkey(\freq),
+			\pNoiz,0.008,
+			\sineMix,[0.2,0.2,0.15,0.15],
+			\atk,0.8,
+			\rls,8,
+			\curve,4,
+			\lagTime,{2.5.rrand(3.5)}!4,
+			\pan,[-0.5,-0.15,0.15,0.5],
+			\amp,Pseq(1!15 ++ [Pwrand([1,0.4],[0.7,0.3],inf)]) * 0.02,
+			\out,OJKOS.synthOutBus,
+		).finDur(60/64 * 4 * 9),
+		Pmono(
+			\tryResNoise,
+			\dur,Pseq([7.5]),
+			\freq, Pdict(tryChords,'f').midicps,
+			\gain,2.5,
+			\sineFreq,Pkey(\freq),
+			\pNoiz,0.01,
+			\sineMix,[0.2,0.2,0.15,0.15] * 0.8,
+			\atk,5,
+			\rls,12,
+			\curve,4,
+			\lagTime,Pfunc({ {2.5.rrand(3.5)}!4 }),
+			\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
+			\amp,0.01,
+			\out,OJKOS.synthOutBus,
+		)
+	]),
 
 	/*=============   push   ==============*/
 
@@ -749,6 +1195,16 @@ IdentityDictionary[
 			\curve,1.neg,
 			\amp,0.03,
 			\out,OJKOS.synthOutBus
+		)
+	]),
+
+	'recBandPush' -> Pseq([
+		ClickRest(150,4,8).pattern,
+		Pbind(
+			\instrument,\recorderStereo,
+			\dur,Pseq([0],1),
+			\inBus,[[ ins['mains'], ins['mains'] + 1 ]],
+			\bufnum,Pfunc({ OJKOS.nextElseBuf }),
 		)
 	]),
 
@@ -828,7 +1284,7 @@ IdentityDictionary[
 			\rls,Pkey(\dur) * 3,
 			\curve,1.neg,
 			\amp,0.03,
-			// \out,OJKOS.synthOutBus
+			\out,OJKOS.synthOutBus
 		),
 		Pbind(
 			\instrument, \pushSines,
@@ -841,7 +1297,7 @@ IdentityDictionary[
 			\rls,Pkey(\dur) * 3,
 			\curve,1.neg,
 			\amp,0.03,
-			// \out,OJKOS.synthOutBus
+			\out,OJKOS.synthOutBus
 		),
 		Pbind(
 			\instrument, \pushSines,
@@ -854,7 +1310,7 @@ IdentityDictionary[
 			\rls,Pkey(\dur) * 3,
 			\curve,1.neg,
 			\amp,0.03,
-			// \out,OJKOS.synthOutBus
+			\out,OJKOS.synthOutBus
 		),
 		Pbind(
 			\instrument, \pushSines,
@@ -867,7 +1323,7 @@ IdentityDictionary[
 			\rls,Pkey(\dur) * 3,
 			\curve,1.neg,
 			\amp,0.03,
-			// \out,OJKOS.synthOutBus
+			\out,OJKOS.synthOutBus
 		),
 		Pbind(
 			\instrument, \pushSines,
@@ -1043,16 +1499,28 @@ IdentityDictionary[
 			\instrument, \monoPlayback,
 			\dur,Pseq([0],1),
 			\bufnum,OJKOS.pbTracks['pop'],
-			\amp,0.054,
+			\amp,0.05,
 			\out,OJKOS.synthOutBus,
 		)
 	]),
 
 	/*=============   pop   ==============*/
 
+	'recBandPop' -> Pbind(
+		\instrument,\recorderStereo,
+		\dur,Pseq([0],1),
+		\inBus,[[ ins['mains'], ins['mains'] + 1 ]],
+		\bufnum,Pfunc({ OJKOS.nextElseBuf }),
+	),
 
 	/*=============   if   ===============*/
 
+	'recBandIf' -> Pbind(
+		\instrument,\recorderStereo,
+		\dur,Pseq([0],1),
+		\inBus,[[ ins['mains'], ins['mains'] + 1 ]],
+		\bufnum,Pfunc({ OJKOS.nextElseBuf }),
+	),
 
 	'ifEKnut' -> Pseq([
 		ClickRest(120,4).pattern,
@@ -1388,6 +1856,13 @@ IdentityDictionary[
 		)
 	]),
 
+	'recBandElse' -> Pbind(
+		\instrument,\recorderStereo,
+		\dur,Pseq([0],1),
+		\inBus,[[ ins['mains'], ins['mains'] + 1 ]],
+		\bufnum,Pfunc({ OJKOS.nextElseBuf }),
+	),
+
 	'elsePlayBackC' -> Pseq([
 		ClickRest(60,7).pattern,
 		Pbind(
@@ -1517,14 +1992,42 @@ IdentityDictionary[
 
 	/*=============   outro   ==============*/
 
-	'outro' -> Pbind(
-		\instrument,\outro,
-		\dur,Pwhite(0.1,2),
-		\degree,Prand ((0..7),inf) * Prand([0.5,1],inf),
-		\atk,0.01,
-		\rls,Pwhite(0.4,0.8),
-		\gain,1,
-		\amp,0.1,
-		\pan,Pwhite(-0.8,0.8)
+	'outroPling' -> Pwhile({ OJKOS.outro },
+		Pbind(
+			\instrument,\outro,
+			\dur,Pwhite(0.1,2),
+			\degree,Prand ((0..7),inf) * Prand([0.5,1],12),
+			\atk,0.01,
+			\rls,Pwhite(0.4,0.8),
+			\gain,1,
+			\amp,0.1,
+			\pan,Pwhite(-0.8,0.8),
+			\out,OJKOS.synthOutBus,
+		)
 	),
+
+	'takkHaDet' -> Pseq([
+		ClickRest(60,4,2).pattern,
+		Pbind(
+			\instrument, \monoPlayback,
+			\dur,Pseq([OJKOS.pbTracks['takk'].duration],1),
+			\bufnum,OJKOS.pbTracks['takk'],
+			\amp,-12.dbamp,
+			\out,OJKOS.synthOutBus,
+		),
+		Pbind(
+			\instrument, \monoPlayback,
+			\dur,Pseq([4],14) * 60/80,
+			\bufnum,Pindex(bandBufArray,Pseq((0..13))),
+			\amp,-12.dbamp,
+			\out,OJKOS.synthOutBus,
+		),
+		Pbind(
+			\instrument, \monoPlayback,
+			\dur,Pseq([0],1),
+			\bufnum,OJKOS.pbTracks['hadet'],
+			\amp,-12.dbamp,
+			\out,OJKOS.synthOutBus,
+		),
+	])
 ]

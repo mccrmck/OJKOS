@@ -1,104 +1,95 @@
 //////////// == CONTROL STRUCTURES: OSCDEFS == ////////////
-{ |lemurAddr|
+(
+/*== click Pdefs == */
 
-	/*== click Pdefs == */
+var introPart1 = OJKOS.cueFrom('introA','introB',true,true,false);
 
+var breakPart1 = OJKOS.cueFrom('breakIntro','breakI',true,true,false);
 
-	var introPart1 = OJKOS.cueFrom('introA','introB',true,true,false);
+var case = OJKOS.cueFrom('caseA','caseF',true,true,false);
 
-	var breakPart1 = OJKOS.cueFrom('breakIntro','breakI',true,true,false);
+var tryABC  = OJKOS.cueFrom('tryABC','tryABC',true,true,false);
+var tryD    = OJKOS.cueFrom('tryD', 'tryD', true, true, false);
+var tryE    = OJKOS.cueFrom('tryE', 'tryE', true, true, false);
+var tryF    = OJKOS.cueFrom('tryF', 'tryF', true, true, false);
+var tryG    = OJKOS.cueFrom('tryG', 'tryG', true, true, false);
+var tryH    = OJKOS.cueFrom('tryH', 'tryH', true, true, false);
+var tryI    = OJKOS.cueFrom('tryI', 'tryI', true, true, false);
+var tryJ    = OJKOS.cueFrom('tryJ', 'tryJ', true, true, false);
+var tryLast = OJKOS.cueFrom('tryK', 'tryN', true, true, false);
 
-	var case = OJKOS.cueFrom('caseA','caseF',true,true,false);
+var pushPart1 = OJKOS.cueFrom('pushA','pushE',true,true,false);
+var push2Pop  = OJKOS.cueFrom('pushF','popB',true,true,false);
 
-	var tryABC = OJKOS.cueFrom('caseA','caseF',true,true,false);
-	var tryD = OJKOS.cueFrom('tryD','tryD',true,true,false);
-	var tryE = OJKOS.cueFrom('tryE','tryE',true,true,false);
-	var tryF = OJKOS.cueFrom('tryF','tryF',true,true,false);
-	var tryG = OJKOS.cueFrom('tryG','tryG',true,true,false);
-	var tryH = OJKOS.cueFrom('tryH','tryH',true,true,false);
-	var tryI = OJKOS.cueFrom('tryI','tryI',true,true,false);
-	var tryJ = OJKOS.cueFrom('tryJ','tryJ',true,true,false);
-	var tryLast = OJKOS.cueFrom('tryK','tryN',true,true,false);
+var popPart2 = OJKOS.cueFrom('popC','popK',true,true,false);
 
-	var pushPart1 = OJKOS.cueFrom('pushA','pushE',true,true,false);
-	var push2Pop = OJKOS.cueFrom('pushF','popB',true,true,false);
-
-	var popPart2 = OJKOS.cueFrom('popC','popK',true,true,false);
-
-	var ifPart1 = OJKOS.cueFrom('ifStart','ifD',true,true,false);
-	var ifPart2 = OJKOS.cueFrom('ifE','ifG',true,true,false);
+var ifPart1 = OJKOS.cueFrom('ifStart','ifD',true,true,false);
+var ifPart2 = OJKOS.cueFrom('ifE','ifG',true,true,false);
 
 
-	var elsePart1 = OJKOS.cueFrom('elseA','elseB',true,true,false);
-	var elsePart2 = OJKOS.cueFrom('elseC','elseF',true,true,false);
+var elsePart1 = OJKOS.cueFrom('elseA','elseB',true,true,false);
+var elsePart2 = OJKOS.cueFrom('elseC','elseF',true,true,false);
 
-	var outro = OJKOS.cueFrom('outro','outro',true,true,false);
+var outro = OJKOS.cueFrom('outro','outro',true,true,false);
 
+var trySlots = Array.fill(11,{0});
 
-	lemurAddr.postln;
+/*=============   intro   ==============*/
 
-	/*=============   intro   ==============*/
+OSCdef(\test,{ |msg, time,addr, recvPort|
 
-	OSCdef(\introPart1,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
-
-		case
-		{val == 0}{
-			introPart1.stop;
-		}
-		{val == 1}{
-			introPart1.play;
-		};
-	},);               // needs address
+	msg.postln;
+},'ojkos/test/x');
 
 
-	OSCdef(\firstCue,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+OSCdef(\introPart1,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-		case
-		{val == 0}{
-			Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['intro0'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
-		}
-		{val == 1}{
-			Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['intro1'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
-		}
-		{val == 2}{
-			Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['intro2'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
-		};
-	},);                // needs address
+	case
+	{val == 0}{ introPart1.stop }
+	{val == 1}{ introPart1.play };
+},'ojkos/introClick/x');
 
-	OSCdef(\firstCue,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+OSCdef(\introLoopCue,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-		case
-		{val == 0}{
-			Click.loopCues['introLoop'] = true;
-		}
-		{val == 1}{
-			Click.loopCues['introLoop'] = false;
-		};
-	},);      // needs address
+	case
+	{val == 0}{ Click.loopCues['introLoop'] = true; "introLoop true".postln }
+	{val == 1}{ Click.loopCues['introLoop'] = false; "introLoop false".postln };
+},'ojkos/loopCue/x');
 
+OSCdef(\tuneCue,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-	OSCdef(\tuneCue,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+	case
+	{val == 0}{ Click.loopCues['tuneLoop'] = true; OJKOS.tune = true; "tuneLoop true".postln }
+	{val == 1}{ Click.loopCues['tuneLoop'] = false; OJKOS.tune = false; "tuneLoop false".postln };
+},'ojkos/tuneCue/x');
 
-		case
-		{val == 0}{
-			Click.loopCues['tuneLoop'] = true;
-			OJKOS.tune = true;
-		}
-		{val == 1}{
-			Click.loopCues['tuneLoop'] = false;
-			OJKOS.tune = false;
-		};
-	},);      // needs address
+OSCdef(\introText,{ |msg, time,addr, recvPort|
+	var val = msg[1..].sum.asInteger;
+
+	case
+	{val == 1}{
+		Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['intro0'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
+	}
+	{val == 2}{
+		Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['intro1'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
+	}
+	{val == 3}{
+		Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['intro2'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
+	};
+},'ojkos/introText/x');
 
 
-	/*=============   begin   ==============*/
+/*=============   begin   ==============*/
 
-	OSCdef(\emptySet,{  |msg, time,addr, recvPort|
+OSCdef(\begin,{  |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
+	case
+	{val == 0}{ Ndef(\emptySet).clear }
+	{val == 1}{
 		Routine({
 
 			Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['begin'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
@@ -108,7 +99,7 @@
 			Ndef(\emptySet,{
 				var varT = \lagTime.kr(0);
 				var varC = \lagCurve.kr(0);
-				var sig, freq = \freq.kr(40).varlag(varT,varC);
+				var sig, freq = \freq.kr(40);
 				var harms = (1..4);
 				var mid = VarSaw.ar(freq * harms,harms.reciprocal.reverse,\width.kr(0.5).varlag(varT,varC),harms.reciprocal).sum;
 				var side = PinkNoise.ar(1,\offset.kr(0).varlag(varT,varC)).clip2;
@@ -120,29 +111,59 @@
 				sig = MS2Stereo.ar([mid * \midAmp.kr(1).varlag(varT,varC),side * \sideAmp.kr(1).varlag(varT,varC)]);
 				sig = (sig * \gain.kr(4).varlag(varT,varC));
 
-				sig = RHPF.ar(sig,\hpFreq.kr(80).varlag(varT,varC),\hpQ.kr(0.1).varlag(varT,varC));
-				sig = RLPF.ar(sig,\lpFreq.kr(8000).varlag(varT,varC),\lpQ.kr(1).varlag(varT,varC));
+				sig = RHPF.ar(sig,\hpFreq.kr(80).varlag(varT,varC).clip(20,20000),\hpQ.kr(0.1).varlag(varT,varC));
+				sig = RLPF.ar(sig,\lpFreq.kr(8000).varlag(varT,varC).clip(20,20000),\lpQ.kr(1).varlag(varT,varC));
 
 				sig = MidEQ.ar(sig,500,1,6);
 				sig = sig.tanh;
-				sig = Compander.ar(sig,In.ar(\sChain.kr(),1),\thresh.kr(0.5),1,\ratio.kr().reciprocal,\cAtk.kr(0.01),\cRls.kr(0.1)); // must test this!!
-				sig = Balance2.ar(sig[0],sig[1],\pan.kr(0),\amp.kr(0.25) * -6.dbamp);
+				sig = Balance2.ar(sig[0],sig[1],\pan.kr(0),\amp.kr(0.25) * -18.dbamp);
 			}).play;
 
-		}).play
-	},);                            // needs address
+		}).play;
+	}
+},'ojkos/begin/x');
 
-	// Ndef(\emptySet).set(\lagTime,2,\lagCurve,4)
-	// Ndef(\emptySet).set(\freq,40,\lpFreq,2000,\lpQ,0.5,\hpFreq,40,\hpQ,1,\midGain,0.02,\sideGain,4,\offset,0.9,\gain,8,\width,0.02,\amp,0.5)
-	// Ndef(\emptySet).clear
+OSCdef(\freqSet,{ |msg, time,addr, recvPort|
+	var hpFreq = msg[1].linexp(0,1,40,10000);
+	var lpFreq = msg[2].linexp(0,1,40,10000);
 
+	Ndef(\emptySet).set(\hpFreq,hpFreq,\lpFreq,lpFreq)
 
-	/*=============   break   ==============*/
+},'ojkos/beginFreq/x');
 
+OSCdef(\beginSet,{ |msg, time,addr, recvPort|
+	var hpQ      = msg[1].linlin(0,1,1.0,0.01);
+	var width    = msg[2];
+	var offset   = msg[3].lincurve(0,1,0,3,3);
+	var gain     = msg[4].lincurve(0,1,1,40,3);
+	var amp      = \db.asSpec.map(msg[5]).dbamp;
+	var midGain  = msg[6].lincurve(0,1,1,40,3);
+	var midAmp   = \db.asSpec.map(msg[7]).dbamp;
+	var sideGain = msg[8].lincurve(0,1,1,40,3);
+	var sideAmp  = \db.asSpec.map(msg[9]).dbamp;
+	var lpQ      = msg[10].linexp(0,1,1.0,0.01);
 
+	Ndef(\emptySet).set(\hpQ,hpQ,\width,width,\offset,offset,\gain,gain,\amp,amp,\midGain,midGain,\midAmp,midAmp,\sideGain,sideGain,\sideAmp,sideAmp,\lpQ,lpQ);
 
-	OSCdef(\breakStart,{  |msg, time,addr, recvPort|
+},'ojkos/beginFaders/x');
 
+OSCdef(\lagTime,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
+
+	case
+	{val == 0}{ Ndef(\emptySet).set(\lagTime,0) }
+	{val == 1}{ Ndef(\emptySet).set(\lagTime,10) }
+
+},'ojkos/lagTime/x');
+
+/*=============   break   ==============*/
+
+OSCdef(\breakStart,{  |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
+
+	case
+	{val == 0}{ breakPart1.stop }
+	{val == 1}{
 		Routine({
 
 			Ndef(\emptySet).clear;
@@ -160,86 +181,261 @@
 			Synth(\bdSynth,[\freq,29.midicps,\sweep,0.06,\rq,0.05,\gain,4,\atk,0.001,\rls,0.08,\curve,14,\amp,0.1,\out,OJKOS.synthOutBus]);
 			4.5.wait;
 			Synth(\bdSynth,[\freq,29.midicps,\sweep,0.06,\rq,0.05,\gain,4,\atk,0.001,\rls,0.08,\curve,14,\amp,0.1,\out,OJKOS.synthOutBus]);
-			11.wait;
-			// breakPart1 starts here? fade in?
+			14.wait;
+			breakPart1.play
 
 		}).play
+	}
+},'ojkos/beginStart/x');
 
-	},);                            // needs address
+/*=============   case   ==============*/
 
+OSCdef(\caseTalk,{  |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-	/*=============   case   ==============*/
-
-
-	OSCdef(\caseTalk,{  |msg, time,addr, recvPort|
+	if(val == 1,{
 
 		Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['case'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
+	})
+},'ojkos/caseText/x');
 
-	},);                            // needs address
+OSCdef(\pluck,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-	OSCdef(\pluckIntro,{ |msg, time,addr, recvPort|
-
+	if(val == 1,{
 		var freq = 400.exprand(800);
-		Synth(\pluck,[\freq,freq,\dcy,4.neg,\coef,0.75.rrand(0.92),\fFreq,freq * 4,\fGain,1,\gain,8,\amp,0.05.rrand(0.2),\pan,0.5.rand2,\out,OJKOS.synthOutBus]);
+		Synth(\pluck,[\freq,freq,\dcy,4.neg,\coef,0.75.rrand(0.92),\fFreq,freq * 4,\fGain,1,\gain,8,\amp,0.15.rrand(0.25),\pan,0.5.rand2,\out,OJKOS.synthOutBus]);
+	})
+},'ojkos/pluck/x');
 
-	},);      // needs address
+OSCdef(\caseStart,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
+
+	case
+	{val == 0}{ case.stop }
+	{val == 1}{ case.play };
+},'ojkos/caseStart/x');
+
+OSCdef(\caseDistort,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
 
+	case
+	{val == 0}{
+		Ndef(\caseFuzz).clear;
+	}
+	{val == 1}{
+		Ndef(\caseFuzz,{
+			var henriette = SoundIn.ar(OJKOS.inBus['henriette']) * \henAmp.kr(0);
+			var camilla = SoundIn.ar(OJKOS.inBus['camilla']) * \camAmp.kr(0);
+			var sol = SoundIn.ar(OJKOS.inBus['maria']) * \marAmp.kr(0);
+			var sigrid = SoundIn.ar(OJKOS.inBus['sigrid']) * \sigAmp.kr(0);
+			var tina = SoundIn.ar(OJKOS.inBus['tina']) * \tinAmp.kr(0);
 
-	OSCdef(\caseStart,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+			var sig = [henriette,camilla,sol,sigrid,tina].sum;
 
-		case
-		{val == 0}{
-			case.stop;
+			sig = Decimator.ar(sig,SampleRate.ir * \sRate.kr(0.5).linexp(0,1,0.005,0.6),24 * \bits.kr(1).linexp(0,1,0.05,0.3));
+			sig = (sig * \gain.kr(1)).tanh;
+			sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.25));
+
+		}).play
+	};
+
+},);
+
+OSCdef(\caseControl,{ |msg, time,addr, recvPort|
+
+	Ndef(\caseFuzz).set(\henAmp,msg[0],\camAmp,msg[1],\marAmp,msg[2],\sigAmp,msg[3],\tinAmp,msg[4]);
+
+});
+
+/*=============   try   ==============*/
+
+OSCdef(\tryStart,{  |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
+
+	case
+	{val == 0}{ Ndef(\tryNoise).end(12) }
+	{val == 1}{
+
+		Routine({
+			Ndef(\tryNoise,\resNoiseASR).set(
+				\freq,880,
+				\pNoiz,0.03,
+				\gain,1,
+				\sineFreq,440,
+				\sineMix,0.05,
+				\atk,7,
+				\rls,20,
+				\curve,3,
+				\pan,0,
+				\amp,0.01,
+			).play(out:OJKOS.synthOutBus);
+
+			14.wait;
+
+			Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['try'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
+
+		}).play
+	}
+},'ojkos/tryStart/x');
+
+
+OSCdef(\tryCues,{ |msg, time,addr, recvPort|
+	var val,index;
+
+	msg[1..].do({ |item, i|
+		item = item.asInteger;
+		if(item != trySlots[i],{
+			val = item;
+			index = i;
+		});
+	});
+
+	trySlots[index] = val;
+
+	switch(val,
+		0,{
+			switch(index,
+				0,{tryABC.stop}, // A
+				1,{tryABC.stop}, // B
+				2,{tryABC.stop}, // C
+				3,{tryD.stop},   // D
+				4,{tryE.stop},   // E
+				5,{tryF.stop},   // F
+				6,{tryG.stop},   // G
+				7,{tryH.stop},   // H
+				8,{tryI.stop},   // I
+				9,{tryJ.stop},   // J
+				10,{tryLast.stop},  // Last
+			)
+		},
+		1,{
+			switch(index,
+				0,{tryABC.play; "a".postln}, // A
+				1,{tryABC.play; "b".postln}, // B
+				2,{tryABC.play; "c".postln}, // C
+				3,{tryD.play;   "d".postln},   // D
+				4,{tryE.play;   "e".postln},   // E
+				5,{tryF.play;   "f".postln},   // F
+				6,{tryG.play;   "g".postln},   // G
+				7,{tryH.play;   "h".postln},   // H
+				8,{tryI.play;   "i".postln},   // I
+				9,{tryJ.play;   "j".postln},   // J
+				10,{tryLast.play; "last".postln},  // Last
+			)
 		}
-		{val == 1}{
-			case.play;
-		};
-	},);               // needs address
+	);
+
+},'ojkos/tryCues/x');
+
+OSCdef(\knutFXAmps,{  |msg, time,addr, recvPort|
+	var delay = \db.asSpec.map(msg[1]).dbamp;
+	var reps = \db.asSpec.map(msg[2]).dbamp;
+	var freeze = \db.asSpec.map(msg[3]).dbamp;
+
+	Ndef(\delayK).set(\amp,delay);
+	Ndef(\repsK).set(\amp,delay);
+	Ndef(\freezeK).set(\amp,delay);
+
+},'ojkos/knutFX/x');
 
 
+OSCdef(\knutFX,{  |msg, time,addr, recvPort|
+	var delay = msg[1].asInteger;
+	var reps = msg[2].asInteger;
+	var freeze = msg[3].asInteger;
 
-	// some distortion controls go here?
+	if(delay == 1,{
+		Ndef(\delayK,{
+			var sig = SoundIn.ar(OJKOS.inBus['knutPerc']);
+			sig = CombC.ar(sig,0.4,LFNoise1.ar(0.2).range(0.2,0.4),2);
+			sig = sig.tanh;
+			sig = Pan2.ar(sig,0,\amp.kr(0.5))
+		}).play(OJKOS.fxOutBus)
+	},{ Ndef(\delayK).clear });
 
+	if(reps == 1,{
+		Ndef(\repsK,{
+			var sig = SoundIn.ar(OJKOS.inBus['knutPerc']);
+			sig = sig * Env.sine().kr;
+			sig = CombC.ar(sig,0.3,Rand(0.1,0.3),inf);
+			sig = sig.tanh;
+			sig = Pan2.ar(sig,0,\amp.kr(0.5))
+		}).play(OJKOS.fxOutBus)
+	},{ Ndef(\repsK).clear });
 
-	/*=============   try   ==============*/
+	if(freeze == 1,{
+		Ndef(\freezeK,{
+			var frames = 4096;
+			var sig = SoundIn.ar(OJKOS.inBus['knutPerc']);
+			sig = FFT(LocalBuf(frames),sig);
+			sig = PV_Freeze(sig,1);
+			sig = IFFT(sig);
+			sig = sig.tanh;
+			sig = Pan2.ar(sig,0,\amp.kr(0.5))
+		}).play(OJKOS.fxOutBus)
+	},{ Ndef(\freezeK).clear });
 
-	OSCdef(\tryStart,{  |msg, time,addr, recvPort|
+},'ojkos/knutFX/z');
 
-		Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['try'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
+OSCdef(\richardFXAmps,{  |msg, time,addr, recvPort|
+	var delay = \db.asSpec.map(msg[1]).dbamp;
+	var reps = \db.asSpec.map(msg[2]).dbamp;
+	var freeze = \db.asSpec.map(msg[3]).dbamp;
 
-		//must add a \resNoise synth here too! very subtle, on A...how do I free it?!?!? Ndef?
+	Ndef(\delayR).set(\amp,delay);
+	Ndef(\repsR).set(\amp,reps);
+	Ndef(\repsR).set(\amp,delay);
 
-	},);                            // needs address
+},'ojkos/richardFX/x');
 
+OSCdef(\richardFX,{  |msg, time,addr, recvPort|
+	var delay = msg[1].asInteger;
+	var reps = msg[2].asInteger;
+	var freeze = msg[3].asInteger;
 
-	OSCdef(\tryCues,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+	if(delay == 1,{
+		Ndef(\delayR,{
+			var sig = SoundIn.ar(OJKOS.inBus['richard']);
+			sig = CombC.ar(sig,0.4,LFNoise1.ar(0.2).range(0.2,0.4),2);
+			sig = sig.tanh;
+			sig = Pan2.ar(sig,0,\amp.kr(0.5))
+		}).play(OJKOS.fxOutBus)
+	},{ Ndef(\delayR).clear });
 
-		// I could use one of the YAWN templates to do off switches as well...worth it?
+	if(reps == 1,{
+		Ndef(\repsR,{
+			var sig = SoundIn.ar(OJKOS.inBus['richard']);
+			sig = sig * Env.sine().kr;
+			sig = CombC.ar(sig,0.3,Rand(0.1,0.3),inf);
+			sig = sig.tanh;
+			sig = Pan2.ar(sig,0,\amp.kr(0.5))
+		}).play(OJKOS.fxOutBus)
+	},{ Ndef(\repsR).clear });
 
-		case
-		{val == 0}{ tryABC.play } // A
-		{val == 1}{ tryABC.play } // B
-		{val == 2}{ tryABC.play } // C
-		{val == 3}{ tryD.play } // D
-		{val == 4}{ tryE.play } // E
-		{val == 5}{ tryF.play } // F
-		{val == 6}{ tryG.play } // G
-		{val == 7}{ tryH.play } // H
-		{val == 8}{ tryI.play } // I
-		{val == 9}{ tryJ.play } // J
-		{val == 10}{ tryLast.play } // Last
+	if(freeze == 1,{
+		Ndef(\freezeR,{
+			var frames = 4096;
+			var sig = SoundIn.ar(OJKOS.inBus['richard']);
+			sig = FFT(LocalBuf(frames),sig);
+			sig = PV_Freeze(sig,1);
+			sig = IFFT(sig);
+			sig = sig.tanh;
+			sig = Pan2.ar(sig,0,\amp.kr(0.5))
+		}).play(OJKOS.fxOutBus)
+	},{ Ndef(\freezeR).clear });
 
+},'ojkos/richardFX/z');
 
-	},);
+/*=============   push   ==============*/
 
-	/*=============   push   ==============*/
+OSCdef(\pushStart,{  |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-
-	OSCdef(\pushStart,{  |msg, time,addr, recvPort|
-
+	case
+	{val == 0}{ /*pushPart1.stop*/ }
+	{val == 1}{
 		Routine({
 			Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['push0'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
 			OJKOS.pbTracks['fred']['push0'].duration.wait;
@@ -249,232 +445,293 @@
 			pushPart1.play;
 
 		}).play;
-		//must add a \resNoise synth here too! very subtle, on A...how do I free it?!?!? Ndef?
+	}
 
-	},);
+},'ojkos/pushStart/x');
 
-	OSCdef(\pushToPop,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+OSCdef(\pushToPop,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-		case
-		{val == 0}{
+	case
+	{val == 0}{ push2Pop.stop }
+	{val == 1}{ push2Pop.play };
+},'ojkos/pushCue/x');
 
-			push2Pop.stop;
-
-		}
-		{val == 1}{
-
-			push2Pop.play;
-		};
-	},);
+/*=============   pop   ==============*/
 
 
+OSCdef(\popPart2,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
+
+	case
+	{val == 0}{ popPart2.stop }
+	{val == 1}{ popPart2.play };
+},'ojkos/popCue/x');
+
+OSCdef(\hendrixAmp,{ |msg, time,addr, recvPort|
+	var val = msg[1];
+
+	Ndef(\hendrix).set(\amp,\db.asSpec.map(val).dbamp)
+},'ojkos/hendrix/x');
+
+OSCdef(\hendrix,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
+
+	case
+	{val == 0}{ Ndef(\hendrix).clear }
+	{val == 1}{
+		Ndef(\hendrix,{
+			var sig = SoundIn.ar(OJKOS.inBus['henriette']);
+			sig = Decimator.ar(sig,SampleRate.ir * \sRate.kr(0.5).linexp(0,1,0.005,0.6),24 * \bits.kr(1).linexp(0,1,0.05,0.3));
+			sig = Compander.ar(sig,sig,0.5,1,1/2,0.01,0.1,2);
+			sig = Limiter.ar(sig);
+			sig = (sig * \gain.kr(1)).tanh;
+			Pan2.ar(sig,\pan.kr(0),\amp.kr(1) * 0.5);
+		}).play(out:OJKOS.fxOutBus)
+	};
+},'ojkos/hendrix/z');
+
+OSCdef(\hendrixYx,{ |msg, time,addr, recvPort|
+	var val = msg[1];
+
+	Ndef(\hendrix).set(\sRate,val)
+},'ojkos/hendrixY/x');
+
+OSCdef(\hendrixYy,{ |msg, time,addr, recvPort|
+	var val = msg[1];
+
+	Ndef(\hendrix).set(\bits,val)
+},'ojkos/hendrixY/y');
+
+//
+
+OSCdef(\doomNoiseX,{ |msg, time,addr, recvPort|
+	var amp = \db.asSpec.map(msg[1]).dbamp;
+	var rq = msg[2].linlin(0,1,1,0.01);
 
 
-	/*=============   pop   ==============*/
+	Ndef(\doomNoise).set(\amp,amp,\rq,rq)
+},'ojkos/doomNoise/x');
 
+OSCdef(\doomNoiseY,{ |msg, time,addr, recvPort|
+	var gain = msg[1].linexp(0,1,1,80);
+	var freq = msg[2].linexp(0,1,20,800);
 
-	OSCdef(\popPart2,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+	Ndef(\doomNoise).set(\gain,gain,\fFreq,freq,)
+},'ojkos/doomNoise/y');
 
-		case
-		{val == 0}{
+OSCdef(\doomNoise,{ |msg, time,addr, recvPort|
+	var val = msg[1..].sum.asInteger;
 
-			popPart2.stop;
+	case
+	{val == 0}{ Ndef(\doomNoise).clear }
+	{val > 0}{
 
-		}
-		{val == 1}{
+		Ndef(\doomNoise,{
+			var sig = BrownNoise.ar(1);
+			sig = BPF.ar(sig,\fFreq.kr(440),\rq.kr(1));
+			sig = (sig *\gain.kr(10)).clip2;
+			sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.3) * 0.1);
+		}).play(out:OJKOS.synthOutBus)
+	}
+},'ojkos/doomNoise/z');
 
-			popPart2.play;
-		};
-	},);
+/*=============   if   ===============*/
 
-	/*
-	Ndef(\bitCrush,{
-	var sig = SoundIn.ar(OJKOS.inBus['henriette']);
-	var sig = Decimator.ar(in,SampleRate.ir * \sRate.kr(0.5).linexp(0,1,0.005,0.6),24 * \bits.kr(1).linexp(0,1,0.05,0.3));
-	sig = Compander.ar(sig,sig,0.5,1,1/3,0.01,0.1,3);
-	sig = (sig * \gain.kr(1)).tanh;
-	Pan2.ar(sig,\pan.kr(0),\amp.kr(1));
-	}).play(out:OJKOS.fxOutBus)
+OSCdef(\ifStart,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-
-	Ndef(\popNoise,{
-	var sig = BrownNoise.ar(1);
-	sig = BPF.ar(sig,\fFreq.kr(440),\rq.kr(1));
-	sig = (sig *\gain.kr(10)).clip2;
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.3));
-	}).set(\amp,0).play
-
-
-	Ndef(\popNoise).set(\gain,200,\fFreq,500,\rq,0.8,\amp,0.1)
-	*/
-
-	/*=============   if   ===============*/
-
-	OSCdef(\ifStart,{  |msg, time,addr, recvPort|
-
+	case
+	{val == 0}{ ifPart1.stop }
+	{val == 1}{
 		Routine({
 
 			Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['if0'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
 			OJKOS.pbTracks['fred']['if0'].duration.wait;
 			1.wait;
 			Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['if1'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
-			ifPart1.play;
+			// ifPart1.play;
+			OJKOS.cueFrom('ifStart','ifD',true,true,false).play
 
 		}).play;
+	}
 
-	},);
+},'ojkos/ifStart/x');
 
+OSCdef(\ifStartCue,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-	OSCdef(\ifPart1,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+	case
+	{val == 0}{ Click.loopCues['ifStart'] = true; "ifStart true".postln }
+	{val == 1}{ Click.loopCues['ifStart'] = false; "ifStart false".postln};
+},'ojkos/ifStartCue/x');
 
+OSCdef(\ifRMCue,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
+
+	case
+	{val == 0}{ Click.loopCues['ifStartRM'] = true; "ifStartRM true".postln }
+	{val == 1}{ Click.loopCues['ifStartRM'] = false; "ifStartRM false".postln};
+},'ojkos/ifRingModCue/x');
+
+OSCdef(\ifPart2,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
+
+	if(Ndef(\ringerKnut).isPlaying.not || Ndef(\ringerHenriette).isPlaying.not,{
+		"the ring mods must be on!!!".postln;
+	},{
 		case
-		{val == 0}{
+		{val == 0}{ ifPart2.stop }
+		{val == 1}{ ifPart2.play };
+	})
+},'ojkos/ifPart2/x');
 
-			ifPart1.stop;
+OSCdef(\ifRingMod,{ |msg, time,addr, recvPort|
+	var knutVal = msg[1].asInteger;
+	var henVal = msg[2].asInteger;
 
-		}
-		{val == 1}{
+	case
+	{knutVal == 0} { Ndef(\ringerKnut).clear }
+	{knutVal == 1} {
+		Ndef(\ringerKnut,{
+			var sig = SoundIn.ar( OJKOS.inBus['knutVibes'] );
+			var mod = SinOsc.ar(\modFreq.kr(1000,0.1));
 
-			ifPart1.play;
-		};
-	},);
+			// sig = Compander.ar(sig,sig,0.1,5,1); // gate ... add threshold
+
+			sig = sig * mod;
+			sig = LeakDC.ar(sig);
+			sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5,0.01));
+		}).play(OJKOS.fxOutBus)
+	};
+
+	case
+	{henVal == 0} { Ndef(\ringerHenriette).clear }
+	{henVal == 1} {
+		Ndef(\ringerHenriette,{
+			var sig = SoundIn.ar( OJKOS.inBus['henriette'] );
+			var mod = SinOsc.ar(\modFreq.kr(1000,0.1));
+
+			// sig = Compander.ar(sig,sig,0.1,5,1); // gate ... add threshold
+
+			sig = sig * mod;
+			sig = LeakDC.ar(sig);
+			sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.5,0.01));
+		}).play(OJKOS.fxOutBus)
+	};
+
+},'ojkos/ringMod/x');
 
 
-	OSCdef(\ifStartCue,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+OSCdef(\ifRingModFaders,{ |msg, time,addr, recvPort|
+	var knutAmp = \db.asSpec.map(msg[1]).dbamp;
+	var modFreq  = msg[2].lincurve(0,1,1,2000,4);
+	var henAmp  = \db.asSpec.map(msg[3]).dbamp;
 
-		case
-		{val == 0}{ Click.loopCues['ifStart'] = true }
-		{val == 1}{ Click.loopCues['ifStart'] = false};
-	},);
+	Ndef(\ringerKnut).set(\modFreq,modFreq,\amp,knutAmp);
+	Ndef(\ringerHenriette).set(\modFreq,modFreq,\amp,henAmp);
+},'ojkos/ringModFreq/x');
 
-	OSCdef(\ifRMCue,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+/*=============   else   ==============*/
 
-		case
-		{val == 0}{ Click.loopCues['ifStartRM'] = true }
-		{val == 1}{ Click.loopCues['ifStartRM'] = false};
-	},);
+OSCdef(\elseStart,{  |msg, time,addr, recvPort|
 
+	Routine({
 
-	OSCdef(\ifPart2,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
-
-		case
-		{val == 0}{
-
-			ifPart2.stop;
-
-		}
-		{val == 1}{
-
-			ifPart2.play;
-		};
-	},);
-
-	// these need one fader that can .set \modFreq and also maybe volume control? And .filter some delay or some shit on this as well maybe...
-	/*(
-
-	Ndef(\ringerKnut,{
-	var sig = SoundIn.ar(\inBus.kr(0));
-	var mod = SinOsc.ar(\modFreq.kr(100));
-
-	sig = Compander.ar(sig,sig,0.1,5,1); // gate ... add threshold
-
-	sig = sig * mod;
-	sig = LeakDC.ar(sig);
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0,0.01));
+		Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['else0'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
+		OJKOS.pbTracks['fred']['else0'].duration.wait;
+		2.wait;
+		Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['else1'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
+		(OJKOS.pbTracks['fred']['else1'].duration - 8).wait;
+		// elsePart1.play;
+		OJKOS.cueFrom('elseA','elseB',true,true,false).play
 
 	}).play;
 
-	Ndef(\ringerHenriette,{
-	var sig = SoundIn.ar(\inBus.kr(0));
-	var mod = SinOsc.ar(\modFreq.kr(100));
+},'ojkos/elseStart/x');
 
-	sig = Compander.ar(sig,sig,0.1,5,1); // gate ... add threshold
+OSCdef(\elsePart2,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-	sig = sig * mod;
-	sig = LeakDC.ar(sig);
-	sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0,0.01));
+	case
+	{val == 0}{ elsePart2.stop }
+	{val == 1}{ elsePart2.play };
+},'ojkos/elseCue/x');
 
-	}).play;
+OSCdef(\magnusCue,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-	)*/
+	case
+	{val == 0}{ Click.loopCues['elseLoop'] = true; "elseLoop true".postln }
+	{val == 1}{ Click.loopCues['elseLoop'] = false; "elseLoop false".postln};
+},'ojkos/magnus/x');
 
+OSCdef(\elseSoloAmp,{ |msg, time,addr, recvPort|
 
-	// when running the ifE - ifG click, it needs to be protected with a Ndef(\ringerHenriette).isPlaying!
+	Ndef(\elseSolo).set(\amp,\db.asSpec.map(msg[1]).dbamp)
 
-	/*=============   else   ==============*/
+},'ojkos/elseSolo/x');
 
-	//as if impro fades, text starts w/ Oskar's click also coming..
+OSCdef(\elseSoloRate,{ |msg, time,addr, recvPort|
+	var freq = msg[1].linexp(0,1,40,12000);
+	var index = msg[2].linlin(0,1,0,(OJKOS.elseIndex-1)).asInteger;
 
-	OSCdef(\elsePart1,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+	Ndef(\elseSolo).set(\fFreq,freq,\bufnum,OJKOS.elseBufs[index])
 
-		case
-		{val == 0}{
+},'ojkos/elseSoloArgs/x');
 
-			elsePart1.stop;
+OSCdef(\elseSoloRate,{ |msg, time,addr, recvPort|
+	var rq = msg[1].linexp(0,1,1,0.01);
+	var rate = msg[2].linexp(0,1,0.5,3);
 
-		}
-		{val == 1}{
+	Ndef(\elseSolo).set(\rq,rq,\rate,rate);
 
-			elsePart1.play;
-		};
-	},);                                         // needs address
+},'ojkos/elseSoloArgs/y');
 
-	OSCdef(\elsePart2,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+OSCdef(\elseSolo,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-		case
-		{val == 0}{
+	case
+	{val == 0}{ Ndef(\elseSolo).clear }
+	{val == 1}{
+		Ndef(\elseSolo,{
+			var bufnum = \bufnum.kr();
+			var frames = BufFrames.kr(bufnum);
+			var pos = Phasor.ar(0,BufRateScale.kr(bufnum) * \rate.kr(1),\start.kr(0) * frames,\end.kr(1) * frames);
+			var sig = BufRd.ar(2,bufnum,pos);
 
-			elsePart2.stop;
+			sig = BPF.ar(sig,\fFreq.kr(500),\rq.kr(1));
 
-		}
-		{val == 1}{
+			sig = (sig * \gain.kr(1)).tanh;
+			sig = Balance2.ar(sig[0],sig[1],\pan.kr(0),\amp.kr(0.5));
 
-			elsePart2.play;
-		};
-	},);
+		}).set(\bufnum,OJKOS.elseBufs[OJKOS.elseIndex.rand]).play
+	}
+},'ojkos/elseSolo/z');
 
-	OSCdef(\magnusCue,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+OSCdef(\elseBufRange,{ |msg, time,addr, recvPort|
+	var start = msg[1];
+	var end = msg[2];
 
-		case
-		{val == 0}{ Click.loopCues['elseLoop'] = true }
-		{val == 1}{ Click.loopCues['elseLoop'] = false};
-	},);
+	Ndef(\elseSolo).set(\start,start,\end,end);
 
-	OSCdef(\magnusCue,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
+},'ojkos/bufRange/x');
 
-		case
-		{val == 0}{ Click.loopCues['elseLoop'] = true }
-		{val == 1}{ Click.loopCues['elseLoop'] = false};
-	},);
+/*=============   outro   ==============*/
 
+// needs one button toggle
 
+OSCdef(\outroPlay,{ |msg, time,addr, recvPort|
+	var val = msg[1].asInteger;
 
-	/*=============   outro   ==============*/
-
-	// needs one button toggle
-
-	OSCdef(\outroPlay,{ |msg, time,addr, recvPort|
-		var val = msg[1].asInteger;
-
-		case
-		{val == 0}{
-			OJKOS.outro = false;
-			outro.stop;
-		}
-		{val == 1}{
-			OJKOS.outro = true;
-			outro.play;
-		};
-	},);               // needs address
-
-}
+	case
+	{val == 0}{
+		OJKOS.outro = false;
+		outro.stop;
+	}
+	{val == 1}{
+		OJKOS.outro = true;
+		outro.play;
+	};
+},'ojkos/outro/x');
+)

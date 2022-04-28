@@ -38,8 +38,8 @@ var pats = OJKOS.patterns;
 	(
 		name: 'breakIntro',
 		countIn: [[ ]],
-		click: [[  ]], // if necessary, I can give myself a click here...
-		pats: [ pats['kickLoop'] ],
+		click: [[ Click(133.125,4,1,12).out_( outs['mike'] ) ]],
+		pats: [ pats['breakIntro'] ],
 	),(
 		name: 'breakPickup',
 		countIn: [[ ClickConCat(1,Click(133.125,2,1,2),Click(133.125,1,1,4)).out_([ outs['tina'],outs['arneMartin'],outs['mike'] ]) ]],
@@ -165,7 +165,7 @@ var pats = OJKOS.patterns;
 	),(
 		name: 'caseF',
 		countIn: [[ ClickConCat(1,Click(130,2,1,2),Click(130,1,1,4)).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
-		click: [[ Click(130,4,1,16).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
+		click: [[ ClickConCat(1,Click(130,4,1,14),ClickCue(130,2,1,2),ClickCue(130,1,1,4)).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
 		pats: [
 			pats['thumpSineF'], pats['klikSlow'].finDur(60/130 * 4 * 16),
 			pats['glitchFills'].finDur(60/130 * 4 * 16),
@@ -197,27 +197,27 @@ var pats = OJKOS.patterns;
 	),(
 		name: 'tryF',
 		countIn: [[]],
-		click: [[ ClickCue(50,4).out_([ outs['henriette'],outs['maria'],outs['sigrid'],outs['richard'],outs['magnus'],outs['knut'],outs['mike'] ]) ]],
+		click: [[ ClickCue(50,4).out_([ outs['henriette'],outs['richard'],outs['knut'],outs['mike'] ]) ]],
 		pats: [ pats['tryBassF'], pats['tryPadsF'] ],
 	),(
 		name: 'tryG',
 		countIn: [[]],
-		click: [[ ClickCue(50,4).out_([ outs['henriette'],outs['maria'],outs['sigrid'],outs['richard'],outs['magnus'],outs['knut'],outs['mike'] ]) ]],
+		click: [[ ClickCue(50,4).out_([ outs['henriette'],outs['richard'],outs['knut'],outs['mike'] ]) ]],
 		pats: [ pats['tryBassG'], pats['tryPadsG'] ],
 	),(
 		name: 'tryH',
 		countIn: [[]],
-		click: [[ ClickCue(50,4).out_([ outs['henriette'],outs['maria'],outs['sigrid'],outs['richard'],outs['magnus'],outs['knut'],outs['mike'] ]) ]],
+		click: [[ ClickCue(50,4).out_([ outs['richard'],outs['magnus'],outs['knut'],outs['mike'] ]) ]],
 		pats: [ pats['tryBassH'], pats['tryPadsH'] ],
 	),(
 		name: 'tryI',
 		countIn: [[]],
-		click: [[ ClickCue(50,4).out_([ outs['henriette'],outs['maria'],outs['sigrid'],outs['richard'],outs['magnus'],outs['knut'],outs['mike'] ]) ]],
+		click: [[ ClickCue(50,4).out_([ outs['sigrid'],outs['richard'],outs['magnus'],outs['knut'],outs['mike'] ]) ]],
 		pats: [ pats['tryBassI'], pats['tryPadsI'] ],
 	),(
 		name: 'tryJ',
 		countIn: [[]],
-		click: [[ ClickCue(50,4).out_([ outs['henriette'],outs['maria'],outs['sigrid'],outs['richard'],outs['magnus'],outs['knut'],outs['mike'] ]) ]],
+		click: [[ ClickCue(50,4).out_([ outs['sigrid'],outs['richard'],outs['magnus'],outs['knut'],outs['mike'] ]) ]],
 		pats: [pats['tryBassJ'], pats['tryPadsJ'] ],
 	),(
 		name: 'tryK',
@@ -362,7 +362,7 @@ var pats = OJKOS.patterns;
 		click: [[
 			ClickConCat(1,
 				ClickCue(90,2,1,2),ClickCue(90,1,1,4),
-				ClickCue(90,4,1,8)
+				Click(90,4,1,8)
 			).out_( outs['all'] )
 		]],
 		pats: [],
@@ -600,9 +600,8 @@ var pats = OJKOS.patterns;
 			Click(80,4,out: outs['arneMartin']),
 			Click(80,4,out: outs['alexander']),
 			ClickRest(80,2),Click(80,4,out: outs['oskar']),
-			ClickRest(80,4,4),Click(80,4,2).out_( outs['all'] )
+			ClickRest(80,4,4),Click(80,4,1,2).out_( outs['all'] )
 		]],
 		pats: [ pats['outroPling'],pats['takkHaDet'] ],
 	)
 ]
-

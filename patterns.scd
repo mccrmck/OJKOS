@@ -90,7 +90,60 @@ IdentityDictionary[
 
 	/*=============   break   ==============*/
 
-
+	'breakIntro' -> Ppar([
+		Pseq([
+			Pbind(
+				\instrument,\bdSynth,
+				\dur,Pseq([1],24) * 60/133.125,
+				\freq,29.midicps, //24 == C, 29 == F
+				\sweep,0.06,
+				\rq,0.05,
+				\gain,4,
+				\atk,0.001,
+				\rls,0.08,
+				\curve,14,
+				\amp,Pseg([0.01,1],[12],\exp,1) * 0.1,
+				\out,OJKOS.kickOut
+			),
+			Pbind(
+				\instrument,\bdSynth,
+				\dur,Pseq([1],24) * 60/133.125,
+				\freq,29.midicps, //24 == C, 29 == F
+				\sweep,0.06,
+				\rq,0.05,
+				\gain,4,
+				\atk,0.001,
+				\rls,0.08,
+				\curve,14,
+				\amp, 0.1,
+				\out,OJKOS.kickOut
+			),
+		]),
+		Pseq([
+			Pbind(
+				\instrument, \monoPlayback,
+				\dur,Pseq([4,4,2,2,2,2],1) * 60/133.125,
+				\bufnum,OJKOS.pbTracks['break'],
+				\amp,Pseg([0.1,1],[16],\lin,1) * 0.2,
+				\out,OJKOS.synthOutBus,
+			),
+			Pbind(
+				\instrument,\grainPerc,
+				\dur,Pseq([0.5,0.5],32) * 60/133.125,
+				\type,Pdup(3,Pseq([\note,\rest],inf)),
+				\bufnum,OJKOS.pbTracks['break'],
+				\rate,1,
+				\pos,Pseq([0.25,0.4,0.5],inf), // descending fminor triad
+				\gain,Pseg([3,80],[32],1.neg),
+				\atk,0.01,
+				\rls,Pseg([0.4,0.1,0.2],[16,16],4.neg),
+				\curve,5.neg,
+				\pan,0,
+				\amp,Pseg([0.1,0.08],[32],\exp),
+				\out,OJKOS.synthOutBus
+			)
+		])
+	]),
 
 	'breakStartFred' -> Pbind(
 		\instrument,\grainPerc,
@@ -118,22 +171,6 @@ IdentityDictionary[
 		\out,OJKOS.synthOutBus
 	),
 
-	'kickLoop' -> Pwhile({ OJKOS.kickLoop },
-		Pbind(
-			\instrument,\bdSynth,
-			\dur,Pseq([1],4) * 60/133.125,
-			\freq,29.midicps, //24 == C, 29 == F
-			\sweep,0.06,
-			\rq,0.05,
-			\gain,4,
-			\atk,0.001,
-			\rls,0.08,
-			\curve,14,
-			\amp,0.1,
-			\out,OJKOS.synthOutBus
-		)
-	),
-
 	'tranceKickSlo' -> Pbind(
 		\instrument,\bdSynth,
 		\dur,60/133.125,
@@ -145,7 +182,7 @@ IdentityDictionary[
 		\rls,0.08,
 		\curve,14,
 		\amp,0.1,
-		\out,OJKOS.synthOutBus
+		\out,OJKOS.kickOut
 	),
 
 	'breakRiserB' -> Pmono(\resNoiseASR,
@@ -158,7 +195,7 @@ IdentityDictionary[
 		\rls,0.001,
 		\curve,5,
 		\pan,[0,-0.5,0.5],
-		\amp,0.04,
+		\amp,0.02,
 		\out,OJKOS.synthOutBus
 	),
 
@@ -176,7 +213,7 @@ IdentityDictionary[
 		\gAtk,0.249 * 60/142,
 		\gRls,0.001 * 60/142,
 		\trig,1,
-		\amp,0.05,
+		\amp,0.08,
 		\out,OJKOS.synthOutBus
 	),
 
@@ -191,7 +228,7 @@ IdentityDictionary[
 		\rls,0.08,
 		\curve,14,
 		\amp,0.1,
-		\out,OJKOS.synthOutBus
+		\out,OJKOS.kickOut
 	),
 
 	'breakRiserD' -> Pseq([
@@ -206,7 +243,7 @@ IdentityDictionary[
 			\rls,0.001,
 			\curve,5,
 			\pan,[0,-0.5,0.5],
-			\amp,0.04,
+			\amp,0.02,
 			\out,OJKOS.synthOutBus
 		)
 	]),
@@ -223,7 +260,7 @@ IdentityDictionary[
 			\rls,0.001,
 			\curve,5,
 			\pan,[0,-0.5,0.5],
-			\amp,0.04,
+			\amp,0.02,
 			\out,OJKOS.synthOutBus
 		)
 	]),
@@ -264,7 +301,7 @@ IdentityDictionary[
 			\gAtk,0.249 * 60/142,
 			\gRls,0.001 * 60/142,
 			\trig,1,
-			\amp,Pseg([1,0.001],[4 * 8] * 60/142,\exp) * 0.05,
+			\amp,Pseg([1,0.01],[4 * 8] * 60/142,\lin) * 0.08,
 			\out,OJKOS.synthOutBus
 		)
 	]),
@@ -381,13 +418,13 @@ IdentityDictionary[
 			\gain,Pseg([4,10,4],[12,15],\lin,inf),
 			\sineFreq,[190,200] * 2,
 			\sineMix,0.05,
-			\atk,7 * 60/96,
+			\atk,12 * 60/96,
 			\rls,2 * 60/96,
 			\curve,4,
 			\pan,[-0.5,0.5],
-			\amp,0.008,
+			\amp,0.005,
 			\out,OJKOS.synthOutBus
-		).finDur(60/96 * 4 * 19)
+		).finDur(60/96 * 4 * 18)
 	]),
 
 	'thumpSine' -> Pbind(
@@ -400,7 +437,7 @@ IdentityDictionary[
 		\curve,10,
 		\gain,2,
 		\amp,Pseq([[1,0.03]],inf) * 0.3,
-		\out,OJKOS.synthOutBus
+		\out,[OJKOS.kickOut,OJKOS.synthOutBus]
 	),
 
 	'klikC' -> Pseq([
@@ -456,7 +493,7 @@ IdentityDictionary[
 		\rls,0.001,
 		\curve,4,
 		\gain,2,
-		\amp,Pseq([0.015],inf),
+		\amp,Pseq([0.01],inf),
 		\out,OJKOS.synthOutBus,
 	),
 
@@ -483,7 +520,7 @@ IdentityDictionary[
 			\gain,4,
 			\atk,0.001,
 			\rls,0.001,
-			\amp,Pseq([0,1,1]) * 0.8,
+			\amp,Pseq([0,1,1]) * 0.25,
 			\pan,Pstep(Pwhite(-0.5,0.5),3 * 60/96),
 			\out,OJKOS.fxOutBus,
 		),
@@ -495,7 +532,7 @@ IdentityDictionary[
 			\gain,4,
 			\atk,0.001,
 			\rls,0.001,
-			\amp,Pseq([0,1,1]) * 0.8,
+			\amp,Pseq([0,1,1]) * 0.25,
 			\pan,Pstep(Pwhite(-0.5,0.5),3 * 60/96),
 			\out,OJKOS.fxOutBus,
 		),
@@ -507,7 +544,7 @@ IdentityDictionary[
 			\gain,4,
 			\atk,0.001,
 			\rls,0.001,
-			\amp,Pseq([0,1,1]) * 0.8,
+			\amp,Pseq([0,1,1]) * 0.25,
 			\pan,Pstep(Pwhite(-0.5,0.5),3 * 60/96),
 			\out,OJKOS.fxOutBus,
 		),
@@ -524,7 +561,7 @@ IdentityDictionary[
 				\gain,4,
 				\atk,0.001,
 				\rls,0.001,
-				\amp,Pseq([0,0,1,1]) * 0.5,
+				\amp,Pseq([0,0,1,1]) * 2,
 				\pan,Pstep(Pwhite(-0.5,0.5),4 * 60/96),
 				\out,OJKOS.fxOutBus,
 			),
@@ -621,7 +658,7 @@ IdentityDictionary[
 			\curve,10,
 			\gain,4,
 			\amp,Pseq([[1,0.05]],inf) * 0.1,
-			\out,OJKOS.synthOutBus
+			\out,[OJKOS.kickOut,OJKOS.synthOutBus]
 		),
 		ClickRest(130,13.5).pattern,
 		Pbind(
@@ -634,7 +671,7 @@ IdentityDictionary[
 			\curve,10,
 			\gain,2.5,
 			\amp,Pseq([[1,0.05]],inf) * 0.1,
-			\out,OJKOS.synthOutBus
+			\out,[OJKOS.kickOut,OJKOS.synthOutBus]
 		),
 		ClickRest(130,12).pattern,
 		Pbind(
@@ -647,7 +684,7 @@ IdentityDictionary[
 			\curve,10,
 			\gain,4,
 			\amp,Pseq([[0.8,0.05]],inf) * 0.1,
-			\out,OJKOS.synthOutBus
+			\out,[OJKOS.kickOut,OJKOS.synthOutBus]
 		),
 		ClickRest(130,14).pattern,
 		Pbind(
@@ -659,7 +696,7 @@ IdentityDictionary[
 			\curve,10,
 			\gain,4,
 			\amp,Pseq([[1,0.05]],inf) * 0.1,
-			\out,OJKOS.synthOutBus
+			\out,[OJKOS.kickOut,OJKOS.synthOutBus]
 		)
 	]),
 
@@ -672,7 +709,7 @@ IdentityDictionary[
 			\gain,4,
 			\atk,0.001,
 			\rls,0.001,
-			\amp,Pseq([0,1,1,1]) * 0.8,
+			\amp,Pseq([0,1,1,1]) * 0.25,
 			\pan,Pstep(Pwhite(-0.5,0.5),4 * 60/130),
 			\out,OJKOS.fxOutBus,
 		),
@@ -684,7 +721,7 @@ IdentityDictionary[
 			\gain,4,
 			\atk,0.001,
 			\rls,0.001,
-			\amp,Pseq([0,1,1,1]) * 0.8,
+			\amp,Pseq([0,1,1,1]) * 0.25,
 			\pan,Pstep(Pwhite(-0.5,0.5),4 * 60/130),
 			\out,OJKOS.fxOutBus,
 		),
@@ -702,7 +739,7 @@ IdentityDictionary[
 				\curve,10,
 				\gain,4,
 				\amp,Pseq([[1,0.05]],inf) * 0.1,
-				\out,OJKOS.synthOutBus
+				\out,[OJKOS.kickOut,OJKOS.synthOutBus]
 			),
 			ClickRest(130,17.5).pattern
 		],3)
@@ -717,7 +754,7 @@ IdentityDictionary[
 			\gain,4,
 			\atk,0.001,
 			\rls,0.001,
-			\amp,Pseq([0,1,1,1]) * 0.8,
+			\amp,Pseq([0,1,1,1]) * 0.25,
 			\pan,Pstep(Pwhite(-0.5,0.5),4 * 60/130),
 			\out,OJKOS.fxOutBus,
 		),
@@ -741,7 +778,7 @@ IdentityDictionary[
 		ClickRest(130,4).pattern,
 		Pmono(
 			\freezeComb,
-			\dur,Pseq([3]) * 60/130,
+			\dur,Prand([1,0.5,1.5],3) * 60/130,
 			\inBus,Prand([ ins['maria'],ins['camilla'] ]),
 			\width,Pwhite(0.15,0.4),
 			\gain,4,
@@ -906,7 +943,7 @@ IdentityDictionary[
 			\curve,4,
 			\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
 			\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
-			\amp,0.02,
+			\amp,0.03,
 			\out,OJKOS.synthOutBus,
 		)
 	]),
@@ -942,7 +979,7 @@ IdentityDictionary[
 			\curve,4,
 			\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
 			\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
-			\amp,0.02,
+			\amp,0.03,
 			\out,OJKOS.synthOutBus,
 		)
 	]),
@@ -978,7 +1015,7 @@ IdentityDictionary[
 			\curve,4,
 			\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
 			\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
-			\amp,0.02,
+			\amp,0.03,
 			\out,OJKOS.synthOutBus,
 		)
 	]),
@@ -1014,7 +1051,7 @@ IdentityDictionary[
 			\curve,4,
 			\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
 			\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
-			\amp,0.02,
+			\amp,0.03,
 			\out,OJKOS.synthOutBus,
 		)
 	]),
@@ -1049,7 +1086,7 @@ IdentityDictionary[
 			\curve,4,
 			\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
 			\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
-			\amp,0.02,
+			\amp,0.03,
 			\out,OJKOS.synthOutBus,
 		)
 	]),
@@ -1086,7 +1123,7 @@ IdentityDictionary[
 		\curve,4,
 		\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
 		\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
-		\amp,0.02,
+		\amp,0.03,
 		\out,OJKOS.synthOutBus,
 	),
 
@@ -1115,7 +1152,7 @@ IdentityDictionary[
 		\curve,4,
 		\lagTime,Pfunc({ {0.5.rrand(1.0)}!4 }),
 		\pan,Pfunc({[-0.5,-0.15,0.15,0.5].scramble}),
-		\amp,0.02,
+		\amp,0.03,
 		\out,OJKOS.synthOutBus,
 	),
 
@@ -1145,7 +1182,7 @@ IdentityDictionary[
 			\curve,4,
 			\lagTime,{2.5.rrand(3.5)}!4,
 			\pan,[-0.5,-0.15,0.15,0.5],
-			\amp,Pseq(1!15 ++ [Pwrand([1,0.4],[0.7,0.3],inf)]) * 0.02,
+			\amp,Pseq(1!15 ++ [Pwrand([1,0.4],[0.7,0.3],inf)]) * 0.03,
 			\out,OJKOS.synthOutBus,
 		).finDur(60/64 * 4 * 9),
 		Pmono(
@@ -1530,7 +1567,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([1],11) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([1,0],inf) * 0.2,
+			\amp,Pseq([1,0],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1539,7 +1576,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([1,0.5,0.5],1) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([0,1,1],inf) * 0.2,
+			\amp,Pseq([0,1,1],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1548,7 +1585,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([1],5) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([0,1],inf) * 0.2,
+			\amp,Pseq([0,1],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1557,7 +1594,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([0.5],2) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,0.2,
+			\amp,0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1566,7 +1603,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([60/120, 60/90, 60/120]),
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([0,1],inf) * 0.2,
+			\amp,Pseq([0,1],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(                     // mm. 156
@@ -1575,7 +1612,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([0.25],4) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,0.2,
+			\amp,0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1584,7 +1621,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq(1!6 ++ (2/3!4) ++ (1!5),1) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([0,1],inf) * 0.2,
+			\amp,Pseq([0,1],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1593,7 +1630,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([1/3],3) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,0.2,
+			\amp,0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1602,7 +1639,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([1],3) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([0,1],inf) * 0.2,
+			\amp,Pseq([0,1],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1611,7 +1648,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([0.25,0.25,0.5],1) * 60/70,
 			\modFreq,Pwhite(200, 3000),
-			\amp,0.2,
+			\amp,0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(                                   // mm. 177
@@ -1620,7 +1657,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([1],6) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([0,1],inf) * 0.2,
+			\amp,Pseq([0,1],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1629,7 +1666,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([60/150,60/150,60/210,60/150],1),
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([0,1],inf) * 0.2,
+			\amp,Pseq([0,1],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1638,7 +1675,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([1],12) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([0,1],inf) * 0.2,
+			\amp,Pseq([0,1],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1660,7 +1697,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([1],11) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([0,1],inf) * 0.2,
+			\amp,Pseq([0,1],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1669,7 +1706,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([0.5,0.5,1],1) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([1,1,0],inf) * 0.2,
+			\amp,Pseq([1,1,0],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1678,7 +1715,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([1],7) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([1,0],inf) * 0.2,
+			\amp,Pseq([1,0],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1696,7 +1733,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([1],8) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([1,0],inf) * 0.2,
+			\amp,Pseq([1,0],inf) * 0.8,
 			\out,OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1705,7 +1742,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq((2/3!4) ++ (1!9),1) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([1,0],inf) * 0.2,
+			\amp,Pseq([1,0],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1723,7 +1760,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([1],6) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([1,0],inf) * 0.2,
+			\amp,Pseq([1,0],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1732,7 +1769,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([60/150,60/150,60/210,60/150],1),
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([1,0],inf) * 0.2,
+			\amp,Pseq([1,0],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1741,7 +1778,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([1],12) * 60/120,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([1,0],inf) * 0.2,
+			\amp,Pseq([1,0],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1750,7 +1787,7 @@ IdentityDictionary[
 			\args,#[\modFreq,\amp],
 			\dur,Pseq([60/70],1),
 			\modFreq,Pwhite(200, 3000),
-			\amp,0.2,
+			\amp,0.8,
 			\out, OJKOS.fxOutBus,
 		),
 	]),
@@ -1763,7 +1800,7 @@ IdentityDictionary[
 			\dur,Pseq([0.5,0.5,2/9,2/9,5/9],1) * 60/100,
 			\legato,1,
 			\modFreq,Pwhite(200, 3000),
-			\amp,0.2,
+			\amp,0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1773,7 +1810,7 @@ IdentityDictionary[
 			\dur,Pseq([1],12) * 60/120,
 			\legato,1,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([0,1],inf) * 0.2,
+			\amp,Pseq([0,1],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		),
 		Pbind(
@@ -1783,7 +1820,7 @@ IdentityDictionary[
 			\dur,Pseq([1],5) * 60/100,
 			\legato,1,
 			\modFreq,Pwhite(200, 3000),
-			\amp,Pseq([0,1],inf) * 0.2,
+			\amp,Pseq([0,1],inf) * 0.8,
 			\out, OJKOS.fxOutBus,
 		)
 	]),
@@ -1828,7 +1865,7 @@ IdentityDictionary[
 		\dur,Pseq([1],1) * 60/80,
 		\legato,1,
 		\modFreq,Pwhite(200, 3000),
-		\amp,0.2,
+		\amp,0.8,
 		\out, OJKOS.fxOutBus,
 	),
 
@@ -1839,7 +1876,7 @@ IdentityDictionary[
 		\dur,60/80,
 		\legato,1,
 		\modFreq,Pwhite(200, 3000),
-		\amp,Pseq([0,1],1) * 0.2,
+		\amp,Pseq([0,1],1) * 0.8,
 		\out, OJKOS.fxOutBus,
 	),
 

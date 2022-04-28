@@ -2,10 +2,10 @@
 
 OJKOS {
 
-	classvar <inBus, <clickOutBus, <synthOutBus, <fxOutBus, <lemurAddr;
+	classvar <inBus, <clickOutBus, <synthOutBus, <fxOutBus, <kickOut, <lemurAddr;
 	classvar <patterns, <score, <pbTracks;
 	classvar <>tune = true, <>outro = true, <>kickLoop = true;
-	clasvar <>breakBus;
+	classvar <>breakBus;
 	classvar <tranceBuf, <elseBufs, <recBufs;
 	classvar <elseIndex = 0;
 
@@ -13,11 +13,11 @@ OJKOS {
 		pbTracks = IdentityDictionary();
 	}
 
-	*new { |ins, clicks, synthOut, fxOut, guiAddr|
-		^super.new.init(ins,clicks, synthOut, fxOut, guiAddr);
+	*new { |ins, clicks, synthOut, fxOut, kickOut, guiAddr|
+		^super.new.init(ins,clicks, synthOut, fxOut, kickOut, guiAddr);
 	}
 
-	init { |ins_, clicks_, synthOut_, fxOut_, guiAddr_|
+	init { |ins_, clicks_, synthOut_, fxOut_, kickOut_, guiAddr_|
 		var server = Server.default;
 		var path = Platform.userExtensionDir +/+ "OJKOS/";
 
@@ -27,10 +27,11 @@ OJKOS {
 			clickOutBus = clicks_;
 			synthOutBus = synthOut_;
 			fxOutBus = fxOut_;
+			kickOut = kickOut_;
 			lemurAddr = guiAddr_;
 
 			tranceBuf = Buffer.alloc(server,server.sampleRate * (60/142 * 4 * 8) );
-			elseBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8,2)});  // shouold these be timed differently to match what they record?
+			elseBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8,2)});  // should these be timed differently to match what they record?
 			breakBus = Bus.control(server,3);
 
 			server.sync;
@@ -66,28 +67,15 @@ OJKOS {
 			patterns = File.readAllString(path ++ "patterns.scd").interpret;
 			server.sync;
 
-
 			// load score
 			score = File.readAllString(path ++ "score.scd").interpret;
 			server.sync;
 
 			// oscDefs for Lemur
 
-
-
-
-
-
-
-			// File.readAllString(path ++ "oscDefs.scd").interpret.value(lemurAddr);
-
-
-
-
-
-
-
-
+			File.readAllString(path ++ "oscDefs.scd").interpret;
+			server.sync;
+			"READY TO PLAY".postln
 		});
 	}
 

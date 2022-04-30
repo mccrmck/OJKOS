@@ -61,17 +61,8 @@ server.options.device = "Dante Virtual Soundcard";
 OJKOS(inputs,clickOuts,synthOuts,processOuts,kickOut,lemurAddr);
 )
 
-OJKOS.patterns
-
 Safety.enable
 Safety.disable
-
-OJKOS.patterns['tranceGate'].play
-
-
-OJKOS.sections[15]
-p = Ppar([OJKOS.score[15]['pats'][1]])
-p.play
 
 
 SoundCheck(32).static(13)

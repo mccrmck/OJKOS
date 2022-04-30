@@ -602,6 +602,6 @@ var pats = OJKOS.patterns;
 			ClickRest(80,2),Click(80,4,out: outs['oskar']),
 			ClickRest(80,4,4),Click(80,4,1,2).out_( outs['all'] )
 		]],
-		pats: [ pats['outroPling'],pats['takkHaDet'] ],
+		pats: [ pats['outroPling'], pats['takkHaDet'] ],
 	)
 ]

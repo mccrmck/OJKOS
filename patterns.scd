@@ -47,7 +47,6 @@ var bandBufArray = OJKOS.pbTracks['band'].asSortedArray.collect({|buf| buf[1]});
 
 IdentityDictionary[
 
-
 	/*=============   intro   ==============*/
 
 	'tuneLoop' -> Pseq([
@@ -2025,7 +2024,6 @@ IdentityDictionary[
 			\out,OJKOS.synthOutBus,
 		)
 	]),
-
 
 	/*=============   outro   ==============*/
 

@@ -41,7 +41,6 @@ OSCdef(\test,{ |msg, time,addr, recvPort|
 	msg.postln;
 },'ojkos/test/x');
 
-
 OSCdef(\introPart1,{ |msg, time,addr, recvPort|
 	var val = msg[1].asInteger;
 
@@ -70,17 +69,10 @@ OSCdef(\introText,{ |msg, time,addr, recvPort|
 	var val = msg[1..].sum.asInteger;
 
 	case
-	{val == 1}{
-		Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['intro0'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
-	}
-	{val == 2}{
-		Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['intro1'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
-	}
-	{val == 3}{
-		Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['intro2'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
-	};
+	{val == 1}{ Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['intro0'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]) }
+	{val == 2}{ Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['intro1'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]) }
+	{val == 3}{ Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['intro2'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]) };
 },'ojkos/introText/x');
-
 
 /*=============   begin   ==============*/
 
@@ -193,10 +185,7 @@ OSCdef(\breakStart,{  |msg, time,addr, recvPort|
 OSCdef(\caseTalk,{  |msg, time,addr, recvPort|
 	var val = msg[1].asInteger;
 
-	if(val == 1,{
-
-		Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['case'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
-	})
+	if(val == 1,{ Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['case'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]) })
 },'ojkos/caseText/x');
 
 OSCdef(\pluck,{ |msg, time,addr, recvPort|
@@ -219,7 +208,6 @@ OSCdef(\caseStart,{ |msg, time,addr, recvPort|
 OSCdef(\caseDistort,{ |msg, time,addr, recvPort|
 	var val = msg[1].asInteger;
 
-
 	case
 	{val == 0}{
 		Ndef(\caseFuzz).clear;
@@ -240,14 +228,13 @@ OSCdef(\caseDistort,{ |msg, time,addr, recvPort|
 
 		}).play
 	};
-
-},);
+},                                  );
 
 OSCdef(\caseControl,{ |msg, time,addr, recvPort|
 
 	Ndef(\caseFuzz).set(\henAmp,msg[0],\camAmp,msg[1],\marAmp,msg[2],\sigAmp,msg[3],\tinAmp,msg[4]);
 
-});
+},                                    );
 
 /*=============   try   ==============*/
 
@@ -339,7 +326,6 @@ OSCdef(\knutFXAmps,{  |msg, time,addr, recvPort|
 	Ndef(\freezeK).set(\amp,delay);
 
 },'ojkos/knutFX/x');
-
 
 OSCdef(\knutFX,{  |msg, time,addr, recvPort|
 	var delay = msg[1].asInteger;
@@ -434,7 +420,7 @@ OSCdef(\pushStart,{  |msg, time,addr, recvPort|
 	var val = msg[1].asInteger;
 
 	case
-	{val == 0}{ /*pushPart1.stop*/ }
+	{val == 0}{ pushPart1.stop }
 	{val == 1}{
 		Routine({
 			Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['push0'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
@@ -446,7 +432,6 @@ OSCdef(\pushStart,{  |msg, time,addr, recvPort|
 
 		}).play;
 	}
-
 },'ojkos/pushStart/x');
 
 OSCdef(\pushToPop,{ |msg, time,addr, recvPort|
@@ -502,8 +487,6 @@ OSCdef(\hendrixYy,{ |msg, time,addr, recvPort|
 
 	Ndef(\hendrix).set(\bits,val)
 },'ojkos/hendrixY/y');
-
-//
 
 OSCdef(\doomNoiseX,{ |msg, time,addr, recvPort|
 	var amp = \db.asSpec.map(msg[1]).dbamp;
@@ -621,7 +604,6 @@ OSCdef(\ifRingMod,{ |msg, time,addr, recvPort|
 	};
 
 },'ojkos/ringMod/x');
-
 
 OSCdef(\ifRingModFaders,{ |msg, time,addr, recvPort|
 	var knutAmp = \db.asSpec.map(msg[1]).dbamp;

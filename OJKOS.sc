@@ -33,13 +33,12 @@ OJKOS {
 			elseBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8,2)});  // should these be timed differently to match what they record?
 
 			server.sync;
-
 			// load synthDefs
-			File.readAllString(path ++ "synthDefs.scd").interpret;
+			File.readAllString(path +/+ "meat" +/+ "synthDefs.scd").interpret;
 			server.sync;
 
 			// load buffers
-			PathName(path ++ "audio").entries.collect({ |entry|
+			PathName(path ++ "potatoes").entries.collect({ |entry|
 
 				if(entry.isFolder,{
 					var folderKey = entry.folderName.asSymbol;
@@ -62,15 +61,15 @@ OJKOS {
 			server.sync;
 
 			// load Patterns
-			patterns = File.readAllString(path ++ "patterns.scd").interpret;
+			patterns = File.readAllString(path +/+ "meat" +/+ "patterns.scd").interpret;
 			server.sync;
 
 			// load score
-			score = File.readAllString(path ++ "score.scd").interpret;
+			score = File.readAllString(path +/+ "meat" +/+ "score.scd").interpret;
 			server.sync;
 
 			// oscDefs for Lemur
-			File.readAllString(path ++ "oscDefs.scd").interpret;
+			File.readAllString(path +/+ "meat" +/+ "oscDefs.scd").interpret;
 			server.sync;
 
 			"READY TO PLAY".postln

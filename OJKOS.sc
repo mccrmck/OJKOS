@@ -5,7 +5,6 @@ OJKOS {
 	classvar <inBus, <clickOutBus, <synthOutBus, <fxOutBus, <kickOut, <lemurAddr;
 	classvar <patterns, <score, <pbTracks;
 	classvar <>tune = true, <>outro = true, <>kickLoop = true;
-	classvar <>breakBus;
 	classvar <tranceBuf, <elseBufs, <recBufs;
 	classvar <elseIndex = 0;
 
@@ -32,7 +31,6 @@ OJKOS {
 
 			tranceBuf = Buffer.alloc(server,server.sampleRate * (60/142 * 4 * 8) );
 			elseBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8,2)});  // should these be timed differently to match what they record?
-			breakBus = Bus.control(server,3);
 
 			server.sync;
 
@@ -72,9 +70,9 @@ OJKOS {
 			server.sync;
 
 			// oscDefs for Lemur
-
 			File.readAllString(path ++ "oscDefs.scd").interpret;
 			server.sync;
+
 			"READY TO PLAY".postln
 		});
 	}

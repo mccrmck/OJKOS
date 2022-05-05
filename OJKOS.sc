@@ -1,4 +1,4 @@
-//////////// == CONTROL STRUCTURES == ////////////
+//////////// == CONTROL STRUCTURES: CLASS == ////////////
 
 OJKOS {
 

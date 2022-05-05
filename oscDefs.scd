@@ -17,6 +17,7 @@ var tryH    = OJKOS.cueFrom('tryH', 'tryH', true, true, false);
 var tryI    = OJKOS.cueFrom('tryI', 'tryI', true, true, false);
 var tryJ    = OJKOS.cueFrom('tryJ', 'tryJ', true, true, false);
 var tryLast = OJKOS.cueFrom('tryK', 'tryN', true, true, false);
+var trySlots = Array.fill(11,{0});
 
 var pushPart1 = OJKOS.cueFrom('pushA','pushE',true,true,false);
 var push2Pop  = OJKOS.cueFrom('pushF','popB',true,true,false);
@@ -26,13 +27,10 @@ var popPart2 = OJKOS.cueFrom('popC','popK',true,true,false);
 var ifPart1 = OJKOS.cueFrom('ifStart','ifD',true,true,false);
 var ifPart2 = OJKOS.cueFrom('ifE','ifG',true,true,false);
 
-
 var elsePart1 = OJKOS.cueFrom('elseA','elseB',true,true,false);
 var elsePart2 = OJKOS.cueFrom('elseC','elseF',true,true,false);
 
 var outro = OJKOS.cueFrom('outro','outro',true,true,false);
-
-var trySlots = Array.fill(11,{0});
 
 /*=============   intro   ==============*/
 
@@ -110,7 +108,6 @@ OSCdef(\begin,{  |msg, time,addr, recvPort|
 				sig = sig.tanh;
 				sig = Balance2.ar(sig[0],sig[1],\pan.kr(0),\amp.kr(0.25) * -18.dbamp);
 			}).play;
-
 		}).play;
 	}
 },'ojkos/begin/x');
@@ -205,36 +202,38 @@ OSCdef(\caseStart,{ |msg, time,addr, recvPort|
 	{val == 1}{ case.play };
 },'ojkos/caseStart/x');
 
+/*
 OSCdef(\caseDistort,{ |msg, time,addr, recvPort|
-	var val = msg[1].asInteger;
+var val = msg[1].asInteger;
 
-	case
-	{val == 0}{
-		Ndef(\caseFuzz).clear;
-	}
-	{val == 1}{
-		Ndef(\caseFuzz,{
-			var henriette = SoundIn.ar(OJKOS.inBus['henriette']) * \henAmp.kr(0);
-			var camilla = SoundIn.ar(OJKOS.inBus['camilla']) * \camAmp.kr(0);
-			var sol = SoundIn.ar(OJKOS.inBus['maria']) * \marAmp.kr(0);
-			var sigrid = SoundIn.ar(OJKOS.inBus['sigrid']) * \sigAmp.kr(0);
-			var tina = SoundIn.ar(OJKOS.inBus['tina']) * \tinAmp.kr(0);
+case
+{val == 0}{
+Ndef(\caseFuzz).clear;
+}
+{val == 1}{
+Ndef(\caseFuzz,{
+var henriette = SoundIn.ar(OJKOS.inBus['henriette']) * \henAmp.kr(0);
+var camilla = SoundIn.ar(OJKOS.inBus['camilla']) * \camAmp.kr(0);
+var sol = SoundIn.ar(OJKOS.inBus['maria']) * \marAmp.kr(0);
+var sigrid = SoundIn.ar(OJKOS.inBus['sigrid']) * \sigAmp.kr(0);
+var tina = SoundIn.ar(OJKOS.inBus['tina']) * \tinAmp.kr(0);
 
-			var sig = [henriette,camilla,sol,sigrid,tina].sum;
+var sig = [henriette,camilla,sol,sigrid,tina].sum;
 
-			sig = Decimator.ar(sig,SampleRate.ir * \sRate.kr(0.5).linexp(0,1,0.005,0.6),24 * \bits.kr(1).linexp(0,1,0.05,0.3));
-			sig = (sig * \gain.kr(1)).tanh;
-			sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.25));
+sig = Decimator.ar(sig,SampleRate.ir * \sRate.kr(0.5).linexp(0,1,0.005,0.6),24 * \bits.kr(1).linexp(0,1,0.05,0.3));
+sig = (sig * \gain.kr(1)).tanh;
+sig = Pan2.ar(sig,\pan.kr(0),\amp.kr(0.25));
 
-		}).play
-	};
-},                                  );
+}).play
+};
+},);
 
 OSCdef(\caseControl,{ |msg, time,addr, recvPort|
 
-	Ndef(\caseFuzz).set(\henAmp,msg[0],\camAmp,msg[1],\marAmp,msg[2],\sigAmp,msg[3],\tinAmp,msg[4]);
+Ndef(\caseFuzz).set(\henAmp,msg[0],\camAmp,msg[1],\marAmp,msg[2],\sigAmp,msg[3],\tinAmp,msg[4]);
 
-},                                    );
+},);
+*/
 
 /*=============   try   ==============*/
 
@@ -266,7 +265,6 @@ OSCdef(\tryStart,{  |msg, time,addr, recvPort|
 		}).play
 	}
 },'ojkos/tryStart/x');
-
 
 OSCdef(\tryCues,{ |msg, time,addr, recvPort|
 	var val,index;
@@ -443,7 +441,6 @@ OSCdef(\pushToPop,{ |msg, time,addr, recvPort|
 },'ojkos/pushCue/x');
 
 /*=============   pop   ==============*/
-
 
 OSCdef(\popPart2,{ |msg, time,addr, recvPort|
 	var val = msg[1].asInteger;

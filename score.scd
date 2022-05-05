@@ -520,7 +520,7 @@ var pats = OJKOS.patterns;
 
 	(
 		name: 'elseA',
-		countIn: [[  ]],
+		countIn: [[ ]],
 		click: [[
 			ClickConCat(1,ClickCue(60,2,1,2),ClickCue(60,1,1,4),Click(60,4,1,4), ClickLoop(60,4,1,2,loopKey: cueKeys[4])).out_([ outs['magnus'], outs['oskar'], outs['mike'] ]),
 			ClickConCat(1,ClickCue(60,2,1,2),ClickCue(60,1,1,4)).out_(outs['all'])

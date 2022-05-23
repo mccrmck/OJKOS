@@ -300,13 +300,13 @@ OSCdef(\tryCues,{ |msg, time,addr, recvPort|
 				0,{tryABC.play; "a".postln}, // A
 				1,{tryABC.play; "b".postln}, // B
 				2,{tryABC.play; "c".postln}, // C
-				3,{tryD.play;   "d".postln},   // D
-				4,{tryE.play;   "e".postln},   // E
-				5,{tryF.play;   "f".postln},   // F
-				6,{tryG.play;   "g".postln},   // G
-				7,{tryH.play;   "h".postln},   // H
-				8,{tryI.play;   "i".postln},   // I
-				9,{tryJ.play;   "j".postln},   // J
+				3,{tryD.play;   "d".postln}, // D
+				4,{tryE.play;   "e".postln}, // E
+				5,{tryF.play;   "f".postln}, // F
+				6,{tryG.play;   "g".postln}, // G
+				7,{tryH.play;   "h".postln}, // H
+				8,{tryI.play;   "i".postln}, // I
+				9,{tryJ.play;   "j".postln}, // J
 				10,{tryLast.play; "last".postln},  // Last
 			)
 		}
@@ -530,8 +530,7 @@ OSCdef(\ifStart,{ |msg, time,addr, recvPort|
 			OJKOS.pbTracks['fred']['if0'].duration.wait;
 			1.wait;
 			Synth(\monoPlayback,[\bufnum,OJKOS.pbTracks['fred']['if1'],\amp,-15.dbamp,\out,OJKOS.synthOutBus]);
-			// ifPart1.play;
-			OJKOS.cueFrom('ifStart','ifD',true,true,false).play
+			ifPart1.play;
 
 		}).play;
 	}

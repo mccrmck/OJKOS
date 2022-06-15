@@ -98,7 +98,7 @@ OSCdef(\begin,{  |msg, time,addr, recvPort|
 				side = LeakDC.ar( HPF.ar( HPF.ar(side,90),90) ) ;
 				side = (side * \sideGain.kr(4).varlag(varT,varC)).fold2;
 
-				sig = MS2Stereo.ar([mid * \midAmp.kr(1).varlag(varT,varC),side * \sideAmp.kr(1).varlag(varT,varC)]);
+				sig = MSMatrix.ar([mid * \midAmp.kr(1).varlag(varT,varC),side * \sideAmp.kr(1).varlag(varT,varC)]);
 				sig = (sig * \gain.kr(4).varlag(varT,varC));
 
 				sig = RHPF.ar(sig,\hpFreq.kr(80).varlag(varT,varC).clip(20,20000),\hpQ.kr(0.1).varlag(varT,varC));

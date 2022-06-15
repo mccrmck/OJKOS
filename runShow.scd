@@ -56,7 +56,7 @@ var lemurAddr = NetAddr("192.168.0.101", 8000);
 //server init stuff
 server.options.numInputBusChannels = 32;
 server.options.numOutputBusChannels = 32;
-server.options.device = "Dante Virtual Soundcard";
+// server.options.device = "Dante Virtual Soundcard";
 
 OJKOS(inputs,clickOuts,synthOuts,processOuts,kickOut,lemurAddr);
 )
@@ -69,3 +69,6 @@ SoundCheck(32).static(13)
 SoundCheck(32,[4,6,5,18,19,7,8,9,10,11,12,17,16,15,14,13]).sweep(0.1)
 SoundCheck(32).clear
 
+a = OJKOS.cueFrom('caseD','caseF',true,true,false)
+a.play
+a.stop

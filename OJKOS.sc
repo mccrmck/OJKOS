@@ -13,7 +13,7 @@ OJKOS {
 	}
 
 	*new { |ins, clicks, synthOut, fxOut, kickOut, guiAddr|
-		^super.new.init(ins,clicks, synthOut, fxOut, kickOut, guiAddr);
+		^super.new.init(ins, clicks, synthOut, fxOut, kickOut, guiAddr);
 	}
 
 	init { |ins_, clicks_, synthOut_, fxOut_, kickOut_, guiAddr_|

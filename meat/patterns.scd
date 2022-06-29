@@ -43,7 +43,7 @@ var tryChords = Dictionary[
 	'gb' -> [61,68,71.5,75.3],
 ];
 
-var bandBufArray = OJKOS.pbTracks['band'].asSortedArray.collect({|buf| buf[1]});
+var bandBufArray = OJKOS.pbTracks['band'].asSortedArray.collect({ |buf| buf[1] });
 
 IdentityDictionary[
 

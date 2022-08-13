@@ -141,16 +141,16 @@ var pats = OJKOS.patterns;
 		pats: [ pats['pluckB'], pats['resNoiseB'], pats['recBandCase'] ],
 	),(
 		name: 'caseC',
-		countIn: [[ ClickConCat(1,Click(96,2,1,2),Click(96,1,1,4)).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
-		click: [[ ClickConCat(1,Click(96,4,1,14),ClickCue(96,2,1,2),ClickCue(96,1,1,4)).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
+		countIn: [[ ClickConCat(1,Click(96,2,1,2),Click(96,1,1,4)).out_([ outs['henriette'], outs['camilla'], outs['maria'], outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
+		click: [[ ClickConCat(1,Click(96,4,1,14),ClickCue(96,2,1,2),ClickCue(96,1,1,4)).out_([ outs['henriette'], outs['camilla'], outs['maria'], outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
 		pats: [
 			pats['thumpSine'].finDur(60/96 * 4 * 16), pats['klikC'],
 			pats['hiSine'].finDur(60/96 * 4 * 16), pats['resNoiseC'].finDur(60/96 * 4 * 15)
 		],
 	),(
 		name: 'caseD',
-		countIn: [[ ClickConCat(1,Click(96,2,1,2),Click(96,1,1,4)).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
-		click: [[ ClickConCat(1,Click(96,4,1,16),Click(130,4,1,3)).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
+		countIn: [[ ClickConCat(1,Click(96,2,1,2),Click(96,1,1,4)).out_([ outs['henriette'], outs['camilla'], outs['maria'], outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
+		click: [[ ClickConCat(1,Click(96,4,1,16),Click(130,4,1,3)).out_([ outs['henriette'], outs['camilla'], outs['maria'], outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
 		pats: [
 			pats['thumpSine'].finDur(60/96 * 4 * 16), pats['klikD'].finDur(60/96 * 4 * 16),
 			pats['breakSine'], pats['breakNoise'], pats['randSines'].finDur(60/96 * 4 * 16),
@@ -164,8 +164,8 @@ var pats = OJKOS.patterns;
 		pats: [ pats['thumpSineE'],pats['klikSlow'].finDur(60/130 * 4 * 16), pats['glitchFills'].finDur(60/130 * 4 * 16), pats['freezeE'], pats['randFreezeComb'].finDur(60/130 * 4 * 16) ],
 	),(
 		name: 'caseF',
-		countIn: [[ ClickConCat(1,Click(130,2,1,2),Click(130,1,1,4)).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
-		click: [[ ClickConCat(1,Click(130,4,1,14),ClickCue(130,2,1,2),ClickCue(130,1,1,4)).out_([ outs['henriette'],outs['camilla'],outs['maria'],outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
+		countIn: [[ ClickConCat(1,Click(130,2,1,2),Click(130,1,1,4)).out_([ outs['henriette'], outs['camilla'], outs['maria'], outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
+		click: [[ ClickConCat(1,Click(130,4,1,14),ClickCue(130,2,1,2),ClickCue(130,1,1,4)).out_([ outs['henriette'], outs['camilla'], outs['maria'], outs['sigrid'], outs['tina'], outs['mike'] ]) ]],
 		pats: [
 			pats['thumpSineF'], pats['klikSlow'].finDur(60/130 * 4 * 16),
 			pats['glitchFills'].finDur(60/130 * 4 * 16),
@@ -451,8 +451,8 @@ var pats = OJKOS.patterns;
 		pats: [],
 	),(
 		name: 'popDoom',
-		countIn: [[ ClickConCat(1,Click(68,2,1,2),Click(68,1,1,4)).out_([ outs['sigrid'],outs['tina'],outs['richard'],outs['lyder'],outs['tancred'],outs['andreas'],outs['magnus'],outs['johannes'],outs['arneMartin'],outs['alexander'],outs['oskar'],outs['mike'] ]) ]],
-		click: [[ ClickConCat(1,Click(68,4,1,12),ClickCue(68,2,1,2),ClickCue(68,1,1,4),ClickCue(68)) .out_([ outs['sigrid'],outs['tina'],outs['richard'],outs['lyder'],outs['tancred'],outs['andreas'],outs['magnus'],outs['johannes'],outs['arneMartin'],outs['alexander'],outs['oskar'],outs['mike'] ]) ]],
+		countIn: [[ ClickConCat(1,Click(68,2,1,2),Click(68,1,1,4)).out_([ outs['sigrid'], outs['tina'], outs['richard'], outs['lyder'], outs['tancred'], outs['andreas'], outs['magnus'], outs['johannes'], outs['arneMartin'], outs['alexander'], outs['oskar'], outs['mike'] ]) ]],
+		click: [[ ClickConCat(1,Click(68,4,1,12),ClickCue(68,2,1,2),ClickCue(68,1,1,4),ClickCue(68)) .out_([ outs['sigrid'], outs['tina'], outs['richard'], outs['lyder'], outs['tancred'], outs['andreas'], outs['magnus'], outs['johannes'], outs['arneMartin'], outs['alexander'], outs['oskar'], outs['mike'] ]) ]],
 		pats: [],
 	),
 

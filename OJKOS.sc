@@ -12,7 +12,7 @@ OJKOS {
 		pbTracks = IdentityDictionary();
 	}
 
-	*new { |ins, clicks, synthOut, fxOut, kickOut, guiAddr|
+	*new { |ins, clicks, synthOut, fxOut, kickOut, guiAddr|                // would it be optimal to just move the whole init func here??
 		^super.new.init(ins, clicks, synthOut, fxOut, kickOut, guiAddr);
 	}
 
@@ -30,7 +30,7 @@ OJKOS {
 			lemurAddr = guiAddr_;
 
 			tranceBuf = Buffer.alloc(server,server.sampleRate * (60/142 * 4 * 8) );
-			elseBufs = Array.fill(12,{Buffer.alloc(server,server.sampleRate * 8,2)});  // should these be timed differently to match what they record?
+			elseBufs = Array.fill(12,{ Buffer.alloc(server,server.sampleRate * 8,2) });  // should these be timed differently to match what they record?
 
 			server.sync;
 			// load synthDefs
@@ -95,7 +95,7 @@ OJKOS {
 		var toIndex = this.sections.indexOf(to);
 		var countInArray = [], cuedArray = [];
 
-		if(countIn,{
+		if( countIn,{
 			if(score[fromIndex]['countIn'].flat.size > 0, {
 				var count = score[fromIndex]['countIn'].deepCollect(2,{ |clk| clk.pattern });
 				count = count.collect({ |clk| Pseq(clk) });

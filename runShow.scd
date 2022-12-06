@@ -44,7 +44,7 @@ var clickOuts = Dictionary[
 	'alexander'  -> 6,
 	'oskar'      -> 4,
 
-	'mike'       -> 19,
+	'mike'       -> 19,//19,
 	'all'        -> (4..19),
 ];
 
@@ -69,6 +69,26 @@ SoundCheck(32).static(13)
 SoundCheck(32,[4,6,5,18,19,7,8,9,10,11,12,17,16,15,14,13]).sweep(0.1)
 SoundCheck(32).clear
 
-a = OJKOS.cueFrom('caseD','caseF',true,true,false)
+
+// case example
+a = OJKOS.cueFrom('introA','introA',true,true,false)
+Click.loopCues['introLoop'] = false;
+(Click.loopCues['tuneLoop'] = false; OJKOS.tune = false;)
 a.play
 a.stop
+
+// case example
+b = OJKOS.cueFrom('caseE','caseF',true,true,false)
+b.play
+b.stop
+
+// try example
+c = OJKOS.cueFrom('tryK','tryN',true,true,false)
+c.play
+c.stop
+
+// push example
+d = OJKOS.cueFrom('pushF','pushL',true,true,false)
+d.play
+d.stop
+

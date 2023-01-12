@@ -630,12 +630,12 @@ IdentityDictionary[
 	]),
 
 	'breakNoise' -> Pseq([
-		ClickRest(96,4*15 + 3).pattern,
+		ClickRest(96,4 * 15 + 3).pattern,
 		Pmono(
 			\lfNoise,
 			\dur,0.001,
 			\freq, Pseg([100,8000],[60/96],\exp),
-			\combFreq,Pseg([40,80].midicps,[60/96]),
+			\combFreq,Pseg([40,80].midicps,[60 / 96]),
 			\dcy,0.02.neg,
 			\atk,0.001,
 			\sus,60/96,
